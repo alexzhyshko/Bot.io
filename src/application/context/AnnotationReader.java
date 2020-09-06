@@ -1,6 +1,7 @@
 package application.context;
 
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -11,7 +12,7 @@ import application.context.annotation.Prototype;
 public class AnnotationReader {
 
 	protected static void process(Map<String, String> files) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		System.out.println("[INFO] Annotation reading started");
+		System.out.printf("[INFO] %s Annotation reading started\n", LocalDateTime.now().toString());
 		for (Entry<String, String> entry : files.entrySet()) {
 			Class temp = Class.forName(entry.getValue());
 			if (hasComponentAnnotation(temp)) {
@@ -25,7 +26,7 @@ public class AnnotationReader {
 				ConfigurationContext.addConfig(temp);
 
 		}
-		System.out.println("[INFO] Annotation reading finished");
+		System.out.printf("[INFO] %s Annotation reading finished\n", LocalDateTime.now().toString());
 	}
 
 	protected static boolean hasComponentAnnotation(Class clazz) {

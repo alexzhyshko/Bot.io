@@ -2,6 +2,7 @@ package application.context;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ public class ApplicationContext {
 	protected static HashMap<Class, Object> prototypeComponents = new HashMap<>();
 
 	protected static void init(String path) throws IOException {
+		System.out.printf("[INFO] %s Application context initialization started\n", LocalDateTime.now().toString());
 		try {
 		Map<String, String> files = Scanner.getAllFilesInProject(path);
 		AnnotationReader.process(files);
@@ -24,6 +26,7 @@ public class ApplicationContext {
 			destroy();
 			System.exit(1);
 		}
+		System.out.printf("[INFO] %s Application context initialization finished\n", LocalDateTime.now().toString());
 	}
 
 	protected static void destroy() {

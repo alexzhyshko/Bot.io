@@ -2,6 +2,7 @@ package application.context;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -10,7 +11,7 @@ import application.context.annotation.Inject;
 public class Injector {
 
 	protected static void inject() throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		System.out.println("[INFO] Dependency injection started");
+		System.out.printf("[INFO] %s Dependency injection started\n", LocalDateTime.now().toString());
 		HashMap<Class, Object> allComponents = new HashMap<>();
 		allComponents.putAll(ApplicationContext.singletonComponents);
 		allComponents.putAll(ApplicationContext.prototypeComponents);
@@ -34,7 +35,7 @@ public class Injector {
 				}
 			}
 		}
-		System.out.println("[INFO] Dependency injection finished");
+		System.out.printf("[INFO] %s Dependency injection finished\n", LocalDateTime.now().toString());
 	}
 
 }
