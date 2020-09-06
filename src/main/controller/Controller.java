@@ -1,10 +1,14 @@
 package main.controller;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import application.context.Scanner;
 import application.context.annotation.Component;
 import application.context.annotation.Inject;
 import application.routing.Router;
@@ -16,8 +20,22 @@ public class Controller extends TelegramLongPollingBot {
 
 	Router router = Router.getInstance();
 	
+	private String token;
+	private String username;
+	
 	@Inject
 	UserService userService;
+	
+	public Controller() {
+		Properties properties = new Properties();
+		try {
+			properties.load(Scanner.class.getClassLoader().getResourceAsStream("configuration.properties"));
+			this.token = properties.getProperty("bot.token");
+			this.username = properties.getProperty("bot.username");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	@Override
 	public void onUpdateReceived(Update update) {
@@ -28,12 +46,12 @@ public class Controller extends TelegramLongPollingBot {
 
 	@Override
 	public String getBotUsername() {
-		return "my1stjob_employers_bot";
+		return this.username;
 	}
 
 	@Override
 	public String getBotToken() {
-		return "1178225428:AAE09N7caDg6QVV2sxFvWRUuUj-Pdip-uYY";
+		return this.token;
 	}
 	
 	public void sendMessage(SendMessage sendMessage) {

@@ -4,3 +4,4 @@ pom.xml
 .settings
 /target
 /bin
+src/main/resources/configuration.properties
