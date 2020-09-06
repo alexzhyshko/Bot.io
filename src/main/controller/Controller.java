@@ -17,14 +17,14 @@ import main.service.UserService;
 
 @Component
 public class Controller extends TelegramLongPollingBot {
-
-	Router router = Router.getInstance();
-	
-	private String token;
-	private String username;
+	@Inject
+	Router router;
 	
 	@Inject
 	UserService userService;
+	
+	private String token;
+	private String username;
 	
 	public Controller() {
 		Properties properties = new Properties();

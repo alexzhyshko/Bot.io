@@ -15,6 +15,7 @@ public class AnnotationReader {
 		for (Entry<String, String> entry : files.entrySet()) {
 			Class temp = Class.forName(entry.getValue());
 			if (hasComponentAnnotation(temp)) {
+				//System.out.println(temp.getName());
 				if (!hasPrototypeAnnotation(temp))
 					ApplicationContext.putIntoSingletonContext(getInstanceOfClass(temp));
 				else

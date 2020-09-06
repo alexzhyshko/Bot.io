@@ -22,8 +22,9 @@ public class Scanner {
 		path+=properties.getProperty("rootScanDirectory");
 		Collection<File> files = FileUtils.listFiles(new File(path), new String[] {"java"}, true);
 		for(File file : files) {
+			//System.out.println(file);
 			String relativePath = file.getAbsolutePath().split("src")[1].substring(1).replace("\\", ".");
-			result.put(file.getName().split(".class")[0], relativePath.split(".java")[0]);
+			result.put(file.getName().split(".java")[0], relativePath.split(".java")[0]);
 		}
 		System.out.println("[INFO] File scan finished");
 		return result;

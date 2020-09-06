@@ -7,20 +7,21 @@ import java.util.HashMap;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import application.context.ApplicationContext;
+import application.context.annotation.Component;
 
+
+@Component
 public class Router {
 
 	private HashMap<Integer, Route> routes;
 
-	private static Router instance;
-
-	private Router() {
+	public Router() {
 		this.routes = new HashMap<>();
 	}
 
-	public static Router getInstance() {
-		return instance == null ? (instance = new Router()) : instance;
-	}
+//	public static Router getInstance() {
+//		return instance == null ? (instance = new Router()) : instance;
+//	}
 
 	public void route(Update update, int caseNumber) {
 		try {

@@ -29,6 +29,7 @@ public class Injector {
 					}
 					field.setAccessible(true);
 					field.set(entry.getValue(), injectingObject);
+					//System.out.println("Injected "+ injectingObject.getClass()+" to "+clazz.getName()+"#"+field.getName());
 					field.setAccessible(false);
 				}
 			}

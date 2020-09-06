@@ -17,8 +17,8 @@ public class ApplicationContext {
 		try {
 		Map<String, String> files = Scanner.getAllFilesInProject(path);
 		AnnotationReader.process(files);
-		ConfigurationContext.performConfiguration();
 		Injector.inject();
+		ConfigurationContext.performConfiguration();
 		}catch(Exception e) {
 			e.printStackTrace();
 			destroy();
@@ -50,11 +50,11 @@ public class ApplicationContext {
 		return instanceClass.getDeclaredConstructor().newInstance();
 	}
 
-	public static Object getInstance(Class clazz) {
+	public static <T> T getInstance(Class<T> clazz) {
 		if (singletonComponents.get(clazz) != null) {
-			return singletonComponents.get(clazz);
+			return (T)singletonComponents.get(clazz);
 		}
-		return prototypeComponents.get(clazz);
+		return (T)prototypeComponents.get(clazz);
 	}
 
 }

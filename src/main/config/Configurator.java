@@ -3,7 +3,6 @@ package main.config;
 import application.configurators.RouterConfiguratorAdapter;
 import application.context.annotation.Configuration;
 import application.routing.Router;
-import main.cases.*;
 
 @Configuration
 public class Configurator extends RouterConfiguratorAdapter {
