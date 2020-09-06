@@ -5,3 +5,4 @@ pom.xml
 /target
 /bin
 src/main/resources/configuration.properties
+README.md
