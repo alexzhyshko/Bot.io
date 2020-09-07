@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import application.context.ApplicationContext;
 import application.context.annotation.Inject;
+import application.context.annotation.UserServiceMarker;
 
 public class Injector {
 
@@ -31,7 +32,12 @@ public class Injector {
 					}
 					field.setAccessible(true);
 					field.set(entry.getValue(), injectingObject);
-					//System.out.println("Injected "+ injectingObject.getClass()+" to "+clazz.getName()+"#"+field.getName());
+					field.setAccessible(false);
+				}
+				if(field.isAnnotationPresent(UserServiceMarker.class)) {
+					field.setAccessible(true);
+					Object injectingObject = ApplicationContext.getUserServiceComponent();
+					field.set(entry.getValue(), injectingObject);
 					field.setAccessible(false);
 				}
 			}

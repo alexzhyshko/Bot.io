@@ -13,6 +13,10 @@ public class Application {
 
 	private Application() {}
 	
+	
+	/**
+	 * A method, which has to be called to start the application
+	 */
 	public static void start() {
 		ApiContextInitializer.init();
 		ContextInitializer.init();

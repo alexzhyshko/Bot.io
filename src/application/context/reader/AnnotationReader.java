@@ -11,6 +11,7 @@ import application.context.annotation.Case;
 import application.context.annotation.Component;
 import application.context.annotation.Configuration;
 import application.context.annotation.Prototype;
+import application.context.annotation.UserServiceMarker;
 import application.context.async.AsyncContext;
 import application.context.cases.CaseContext;
 import application.context.configuration.ConfigurationContext;
@@ -32,6 +33,9 @@ public class AnnotationReader {
 					ApplicationContext.putIntoPrototypeContext(getInstanceOfClass(temp));
 				if(hasCaseAnnotation(temp)) {
 					CaseContext.add(temp);
+				}
+				if(hasUserServiceAnnotation(temp)) {
+					ApplicationContext.setUserService(temp);
 				}
 			} else if (hasConfigurationAnnotation(temp))
 				ConfigurationContext.addConfig(temp);
@@ -58,6 +62,10 @@ public class AnnotationReader {
 
 	private static boolean hasCaseAnnotation(Class clazz) {
 		return clazz.getDeclaredAnnotation(Case.class) != null;
+	}
+	
+	private static boolean hasUserServiceAnnotation(Class clazz) {
+		return clazz.getDeclaredAnnotation(UserServiceMarker.class) != null;
 	}
 	
 	private static Object getInstanceOfClass(Class clazz) throws InstantiationException, IllegalAccessException,

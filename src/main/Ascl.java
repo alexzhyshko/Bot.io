@@ -3,7 +3,7 @@ package main;
 import application.context.annotation.Async;
 import application.context.annotation.Component;
 
-@Async
+//@Async
 @Component
 public class Ascl {
 

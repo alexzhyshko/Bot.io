@@ -4,15 +4,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import application.configurators.ConfiguratorAdapter;
+import application.context.ApplicationContext;
 import application.context.annotation.Component;
-import application.context.annotation.Inject;
 import application.routing.Router;
 
 @Component
 public class ConfigurationInvoker {
 
-	@Inject
-	private static Router router;
+	private static Router router = ApplicationContext.getComponent(Router.class);
 
 	protected static <T extends ConfiguratorAdapter> void invoke(Class<T> configurator)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {

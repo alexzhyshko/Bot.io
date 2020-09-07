@@ -20,7 +20,9 @@ public class ApplicationContext {
 
 	protected static HashMap<Class, Object> singletonComponents = new HashMap<>();
 	protected static HashMap<Class, Object> prototypeComponents = new HashMap<>();
-
+	protected static Class userServiceClass;
+	protected static Object userServiceObject;
+	
 	protected static void init(String path) throws IOException {
 		System.out.printf("[INFO] %s Application context initialization started\n", LocalDateTime.now().toString());
 		try {
@@ -42,6 +44,22 @@ public class ApplicationContext {
 		System.out.println("Destroyed");
 	}
 
+	public static void setUserService(Class clazz) {
+		userServiceClass = clazz;
+	}
+	
+	public static Object getUserServiceComponent(){
+		try {
+			if(userServiceObject==null) {
+				userServiceObject = userServiceClass.getDeclaredConstructor().newInstance();
+			}
+			return userServiceObject;
+		} catch (Exception e) {
+			throw new IllegalArgumentException("No UserService class found");
+		}
+		
+	}
+	
 	
 	
 	public static HashMap<Class, Object> getSingletonComponents() {
@@ -77,6 +95,14 @@ public class ApplicationContext {
 			return (T)singletonComponents.get(clazz);
 		}
 		return (T)prototypeComponents.get(clazz);
+	}
+	
+	public static int getUserState(int userid) {
+		try {
+			return (Integer)userServiceClass.getDeclaredMethod("getUserState", int.class).invoke(userServiceObject, userid);
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new IllegalArgumentException("No method getUserState() specified in a class marked with @UserServiceMarker");
+		}
 	}
 
 }
