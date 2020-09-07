@@ -1,14 +1,13 @@
 package main;
 
 import application.context.annotation.Async;
-import application.context.annotation.AsyncMethod;
 import application.context.annotation.Component;
 
 @Async
 @Component
 public class Ascl {
 
-	@AsyncMethod
+	@Async
 	public void async1() {
 
 		while(true) {
@@ -22,7 +21,7 @@ public class Ascl {
 		
 	}
 
-	@AsyncMethod
+	@Async
 	public void async2() {
 		while(true) {
 			System.out.println("async2 running");

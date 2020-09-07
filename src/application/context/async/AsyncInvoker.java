@@ -5,14 +5,14 @@ import java.lang.reflect.Method;
 
 import application.configurators.ConfiguratorAdapter;
 import application.context.ApplicationContext;
-import application.context.annotation.AsyncMethod;
+import application.context.annotation.Async;
 
 public class AsyncInvoker {
 
 	protected static <T extends ConfiguratorAdapter> void invoke(Class<T> async)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		for (Method method : async.getDeclaredMethods()) {
-			if (method.isAnnotationPresent(AsyncMethod.class)) {
+			if (method.isAnnotationPresent(Async.class)) {
 				new Thread(() -> {
 					try {
 						method.invoke(ApplicationContext.getComponent(async));
