@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import application.context.async.AsyncContext;
+import application.context.cases.CaseContext;
 import application.context.configuration.ConfigurationContext;
 import application.context.inject.Injector;
 import application.context.reader.AnnotationReader;
@@ -27,6 +28,7 @@ public class ApplicationContext {
 		AnnotationReader.process(files);
 		Injector.inject();
 		ConfigurationContext.performConfiguration();
+		CaseContext.init();
 		AsyncContext.runAsync();
 		}catch(Exception e) {
 			e.printStackTrace();

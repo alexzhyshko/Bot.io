@@ -7,10 +7,12 @@ import java.util.Map.Entry;
 
 import application.context.ApplicationContext;
 import application.context.annotation.Async;
+import application.context.annotation.Case;
 import application.context.annotation.Component;
 import application.context.annotation.Configuration;
 import application.context.annotation.Prototype;
 import application.context.async.AsyncContext;
+import application.context.cases.CaseContext;
 import application.context.configuration.ConfigurationContext;
 
 public class AnnotationReader {
@@ -28,6 +30,9 @@ public class AnnotationReader {
 					ApplicationContext.putIntoSingletonContext(getInstanceOfClass(temp));
 				else
 					ApplicationContext.putIntoPrototypeContext(getInstanceOfClass(temp));
+				if(hasCaseAnnotation(temp)) {
+					CaseContext.add(temp);
+				}
 			} else if (hasConfigurationAnnotation(temp))
 				ConfigurationContext.addConfig(temp);
 
@@ -51,6 +56,10 @@ public class AnnotationReader {
 		return clazz.getDeclaredAnnotation(Prototype.class) != null;
 	}
 
+	private static boolean hasCaseAnnotation(Class clazz) {
+		return clazz.getDeclaredAnnotation(Case.class) != null;
+	}
+	
 	private static Object getInstanceOfClass(Class clazz) throws InstantiationException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		return clazz.getDeclaredConstructor().newInstance();
