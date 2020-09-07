@@ -11,7 +11,7 @@ public class Configurator extends RouterConfiguratorAdapter {
 	}
 
 	public static void configure(Router router) {
-		for (int i = 1; i < 12; i++) {
+		for (int i = 0; i < 12; i++) {
 			try {
 				router.add(i, "onRouteReceived", Class.forName("main.cases.Case"+i));
 			} catch (ClassNotFoundException e) {
