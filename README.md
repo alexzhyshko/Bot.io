@@ -5,7 +5,9 @@
   - *Route an update to a specific class and method*
   - *Use built-in Dependency Injection for comfortable component usage*
   - *Easily scale your app only by adding one config line and one class*
+  - *Use a built-in boilerplate class for Bot that has all you need by default*
 
+Configure `bot.token`, `bot.username` and `rootScanDirectory` in `application.properties` file
 
 ## Tech
 
