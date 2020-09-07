@@ -9,6 +9,7 @@
 
 ###### For startup use `Application.start()` in your main method
 ###### Configure `bot.token`, `bot.username` and `rootScanDirectory` in `application.properties` file
+###### For appropriate work you have to define your own `UserService` class with a `getUserCase()` method inside and annotate this class with `@UserServiceMarker`, as well as `@Component` annotation for the framework to use this class for routing
 
 ## Tech
 
@@ -24,9 +25,14 @@
 * `@Async` - use this annotation on the type to mark that a type contains async code. Use on method to specify which method should be ran asynchronously
 * `@Case` - use this annotation on the type to mark that a type contains case mapping. Use on method to specify which method should be used for mapping. In parentheses specify `caseNumber` to map(default = 0)
 ##### Router
-* Use `@Configuration` annotation and extend `RouterConfiguratorAdapter` to write your custom router config. Use `add(caseNumber, methodName, className)` to add a route to a class.
-* Create a class with name `className` and create inside a method with name `methodName`, also you need to specify an Update argument for this method.
+* Use `@Configuration` annotation and extend `RouterConfiguratorAdapter` to write your custom router config. Use `add(caseNumber, methodName, class)` to add a route to a class.
+* Create a `class` class and define a method with name `methodName` inside , also you need to specify an Update argument for this method.
 * After this, any update will be routed to your method depending on case in UserService([examples](src/main/cases))
 
-
+  ##### Or
+  
+* Create any class in your project
+* Annotate it with `@Component` and `@Case`
+* Add any method and annotate it with `@Case` and add `caseNumber` parameter in parantheses. 
+All mapping will be performed automatically
 
