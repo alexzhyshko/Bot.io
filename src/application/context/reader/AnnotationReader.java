@@ -22,23 +22,18 @@ public class AnnotationReader {
 		for (Entry<String, String> entry : files.entrySet()) {
 			Class temp = Class.forName(entry.getValue());
 			if (hasComponentAnnotation(temp)) {
-				if (hasAsyncAnnotation(temp)) {
+				if (hasAsyncAnnotation(temp))
 					AsyncContext.addAsync(temp);
-				} else {
-					// System.out.println(temp.getName());
-					if (!hasPrototypeAnnotation(temp))
-						ApplicationContext.putIntoSingletonContext(getInstanceOfClass(temp));
-					else
-						ApplicationContext.putIntoPrototypeContext(getInstanceOfClass(temp));
-				}
+				if (!hasPrototypeAnnotation(temp))
+					ApplicationContext.putIntoSingletonContext(getInstanceOfClass(temp));
+				else
+					ApplicationContext.putIntoPrototypeContext(getInstanceOfClass(temp));
 			} else if (hasConfigurationAnnotation(temp))
 				ConfigurationContext.addConfig(temp);
 
 		}
 		System.out.printf("[INFO] %s Annotation reading finished\n", LocalDateTime.now().toString());
 	}
-	
-	
 
 	private static boolean hasAsyncAnnotation(Class clazz) {
 		return clazz.getDeclaredAnnotation(Async.class) != null;

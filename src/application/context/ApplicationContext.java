@@ -70,7 +70,7 @@ public class ApplicationContext {
 		return instanceClass.getDeclaredConstructor().newInstance();
 	}
 	
-	public static <T> T getInstance(Class<T> clazz) {
+	public static <T> T getComponent(Class<T> clazz) {
 		if (singletonComponents.get(clazz) != null) {
 			return (T)singletonComponents.get(clazz);
 		}

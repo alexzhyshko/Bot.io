@@ -1,7 +1,5 @@
 package main;
 
-import java.time.LocalDateTime;
-
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -18,7 +16,7 @@ public class Main {
 		ContextInitializer.init();
 		TelegramBotsApi botsApi = new TelegramBotsApi();
 		try {
-			botsApi.registerBot((LongPollingBot)ApplicationContext.getInstance(Controller.class));
+			botsApi.registerBot((LongPollingBot)ApplicationContext.getComponent(Controller.class));
 		} catch (TelegramApiException e) {
 			e.printStackTrace();
 		}

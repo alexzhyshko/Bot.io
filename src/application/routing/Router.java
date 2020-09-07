@@ -28,7 +28,7 @@ public class Router {
 			Route destinationRoute = getRouteyCase(caseNumber);
 			Class destinationClass = destinationRoute.getRouteClass();
 			Method destinationMethod = destinationClass.getMethod(destinationRoute.getMethodName(), Update.class);
-			destinationMethod.invoke(ApplicationContext.getInstance(destinationClass), update);
+			destinationMethod.invoke(ApplicationContext.getComponent(destinationClass), update);
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NullPointerException e) {
 			e.printStackTrace();
