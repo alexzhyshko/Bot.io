@@ -9,6 +9,7 @@
 
 ###### For startup use `Application.start()` in your main method
 ###### Configure `bot.token`, `bot.username` and `rootScanDirectory` in `application.properties` file
+###### For appropriate work you have to define your own `UserService` class with a `getUserCase()` method inside and annotate this class with `@UserServiceMarker` annotation for the framework to use this class for routing
 
 ## Tech
 
