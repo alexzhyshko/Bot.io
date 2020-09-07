@@ -27,7 +27,7 @@
 ##### Router
 * Use `@Configuration` annotation and extend `RouterConfiguratorAdapter` to write your custom router config. Use `add(caseNumber, methodName, class)` to add a route to a class.
 * Create a `class` class and define a method with name `methodName` inside , also you need to specify an Update argument for this method.
-* After this, any update will be routed to your method depending on case in UserService([examples](src/main/cases))
+* After this, any update will be routed to your method depending on case in UserService
 
   ##### Or
   
