@@ -18,8 +18,8 @@
 * `@Configuration` - to mark your custom config class
 * `@Component` - to include a class to an Application Context
 * `@Inject` - to inject an object to a field
-* `@Async` - to mark, that this class contains async functionality
-* `@AsyncMethod` - to mark a method inside an Async class, that should be executed asynchronously
+* `@Async` - use this annotation on the type to mark that a type contains async code. Use on method to specify which method should be ran asynchronously
+* `@Case` - use this annotation on the type to mark that a type contains case mapping. Use on method to specify which method should be used for mapping. In brackets specify `caseNumber` to map(default = 0)
 ##### Router
 * Use `@Configuration` annotation and extend `RouterConfiguratorAdapter` to write your custom router config. Use `add(caseNumber, methodName, className)` to add a route to a class.
 * Create a class with name `className` and create inside a method with name `methodName`, also you need to specify an Update argument for this method.
