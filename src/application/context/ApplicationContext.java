@@ -6,6 +6,12 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import application.context.async.AsyncContext;
+import application.context.configuration.ConfigurationContext;
+import application.context.inject.Injector;
+import application.context.reader.AnnotationReader;
+import application.context.scan.Scanner;
+
 public class ApplicationContext {
 
 	private ApplicationContext() {
@@ -21,38 +27,49 @@ public class ApplicationContext {
 		AnnotationReader.process(files);
 		Injector.inject();
 		ConfigurationContext.performConfiguration();
+		AsyncContext.runAsync();
 		}catch(Exception e) {
 			e.printStackTrace();
 			destroy();
 			System.exit(1);
 		}
-		System.out.printf("[INFO] %s Application context initialization finished\n", LocalDateTime.now().toString());
+		System.out.printf("[INFO] %s Application context initialization finished with %d singleton classes and %d prototype(-s)\n", LocalDateTime.now().toString(), singletonComponents.size(), prototypeComponents.size());
 	}
 
 	protected static void destroy() {
 		System.out.println("Destroyed");
 	}
 
-	protected static void putIntoSingletonContext(Object object) {
+	
+	
+	public static HashMap<Class, Object> getSingletonComponents() {
+		return singletonComponents;
+	}
+
+	public static HashMap<Class, Object> getPrototypeComponents() {
+		return prototypeComponents;
+	}
+
+	public static void putIntoSingletonContext(Object object) {
 		singletonComponents.put(object.getClass(), object);
 	}
 
-	protected static Object getSingletonComponent(Class instanceClass) {
+	public static Object getSingletonComponent(Class instanceClass) {
 		return singletonComponents.get(instanceClass);
 	}
 
-	protected static void putIntoPrototypeContext(Object object) {
+	public static void putIntoPrototypeContext(Object object) {
 		prototypeComponents.put(object.getClass(), object);
 	}
 
-	protected static Object getPrototypeComponent(Class instanceClass)
+	public static Object getPrototypeComponent(Class instanceClass)
 			throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		if (!prototypeComponents.containsKey(instanceClass)) {
 			return null;
 		}
 		return instanceClass.getDeclaredConstructor().newInstance();
 	}
-
+	
 	public static <T> T getInstance(Class<T> clazz) {
 		if (singletonComponents.get(clazz) != null) {
 			return (T)singletonComponents.get(clazz);

@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import application.context.annotation.Component;
 import application.context.annotation.Inject;
+import application.context.annotation.Prototype;
 import main.controller.Controller;
 import main.service.UserService;
 

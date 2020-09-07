@@ -39,8 +39,9 @@ public class Router {
 		return routes.get(caseNum);
 	}
 
-	public void add(int caseNumber, String methodName, Class className) {
+	public Router add(int caseNumber, String methodName, Class className) {
 		this.routes.put(caseNumber, new Route(caseNumber, methodName, className));
+		return this;
 	}
 
 }

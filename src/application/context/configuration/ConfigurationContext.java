@@ -1,4 +1,4 @@
-package application.context;
+package application.context.configuration;
 
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
@@ -9,16 +9,16 @@ public class ConfigurationContext {
 
 	private static List<Class> configurationClasses = new ArrayList<>();
 
-	protected static void addConfig(Class configClass) {
+	public static void addConfig(Class configClass) {
 		configurationClasses.add(configClass);
 	}
 
-	protected static void performConfiguration() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	public static void performConfiguration() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		System.out.printf("[INFO] %s Configuration started\n", LocalDateTime.now().toString());
 		for (Class config : configurationClasses) {
 			ConfigurationInvoker.invoke(config);
 		}
-		System.out.printf("[INFO] %s Configuration finished\n", LocalDateTime.now().toString());
+		System.out.printf("[INFO] %s Configuration finished, used %d config class(-es)\n", LocalDateTime.now().toString(), configurationClasses.size());
 	}
 
 }

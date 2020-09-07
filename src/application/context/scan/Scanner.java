@@ -1,4 +1,4 @@
-package application.context;
+package application.context.scan;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,7 @@ public class Scanner {
 	
 	//key - filename
 	//value - relative path
-	protected static Map<String, String> getAllFilesInProject(String path) throws IOException {
+	public static Map<String, String> getAllFilesInProject(String path) throws IOException {
 		System.out.printf("[INFO] %s File scan started\n", LocalDateTime.now().toString());
 		HashMap<String, String> result = new HashMap<>();
 		Properties properties = new Properties();
@@ -33,7 +33,7 @@ public class Scanner {
 			String relativePath = file.getAbsolutePath().split("src")[1].substring(1).replace("\\", ".");
 			result.put(file.getName().split(".java")[0], relativePath.split(".java")[0]);
 		}
-		System.out.printf("[INFO] %s File scan finished\n", LocalDateTime.now().toString());
+		System.out.printf("[INFO] %s File scan finished, found %d files\n", LocalDateTime.now().toString(), files.size());
 		return result;
 	}
 
