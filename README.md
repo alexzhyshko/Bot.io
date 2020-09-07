@@ -29,5 +29,10 @@
 * Create a class with name `className` and create inside a method with name `methodName`, also you need to specify an Update argument for this method.
 * After this, any update will be routed to your method depending on case in UserService([examples](src/main/cases))
 
-
+  ##### Or
+  
+* Create any class in your project
+* Annotate it with `@Component` and `@Case`
+* Add any method and annotate it with `@Case` and add `caseNumber` parameter in parantheses
+All mapping will be performed automatically
 
