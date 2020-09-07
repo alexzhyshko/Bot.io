@@ -33,6 +33,6 @@
   
 * Create any class in your project
 * Annotate it with `@Component` and `@Case`
-* Add any method and annotate it with `@Case` and add `caseNumber` parameter in parantheses
+* Add any method and annotate it with `@Case` and add `caseNumber` parameter in parantheses. 
 All mapping will be performed automatically
 
