@@ -7,8 +7,8 @@
   - *Easily scale your app only by adding one config line and one class*
   - *Use a built-in boilerplate class for Bot that has all you need by default*
 
-For startup use `Application.start()` in your main method
-Configure `bot.token`, `bot.username` and `rootScanDirectory` in `application.properties` file
+###### For startup use `Application.start()` in your main method
+###### Configure `bot.token`, `bot.username` and `rootScanDirectory` in `application.properties` file
 
 ## Tech
 
