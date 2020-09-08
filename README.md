@@ -1,5 +1,5 @@
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
-<img src="https://img.shields.io/badge/version-v1.0.0-brightgreen.svg?style=flat-square" alt="Version">
+<img src="https://img.shields.io/badge/version-v1.1.0-brightgreen.svg?style=flat-square" alt="Version">
 <img src="https://img.shields.io/travis/schollz/croc.svg?style=flat-square" alt="Build
 Status">
 
@@ -11,7 +11,7 @@ Status">
 <dependency>
 	<groupId>io.github.alexzhyshko</groupId>
 	<artifactId>BotIO</artifactId>
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 </dependency>
 ```
 
