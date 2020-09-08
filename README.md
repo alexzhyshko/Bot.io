@@ -5,6 +5,7 @@
 Status">
 
 ### The project is available on Maven Central:
+https://search.maven.org/artifact/io.github.alexzhyshko/BotIO/1.1.0/jar
 ##### Maven:
 
 ```
