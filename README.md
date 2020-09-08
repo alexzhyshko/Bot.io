@@ -1,3 +1,5 @@
+https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs
+
 # `Bot.io`
 
 ##### It's a simple Telegram Bot framework for Java to make your life easier
