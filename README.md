@@ -1,4 +1,7 @@
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs) <img src="https://img.shields.io/badge/version-v1.0.0-brightgreen.svg?style=flat-square" alt="Version">
+[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs) 
+<img src="https://img.shields.io/badge/version-v8.3.1-brightgreen.svg?style=flat-square" alt="Version">
+<img src="https://img.shields.io/travis/schollz/croc.svg?style=flat-square" alt="Build
+Status">
 
 
 # `Bot.io`
