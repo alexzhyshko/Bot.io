@@ -9,9 +9,9 @@ Status">
 ### The project is available as a Maven dependency:
 ```
 <dependency>
-		<groupId>io.github.alexzhyshko</groupId>
-		<artifactId>BotIO</artifactId>
-		<version>1.0.0</version>
+	<groupId>io.github.alexzhyshko</groupId>
+	<artifactId>BotIO</artifactId>
+	<version>1.0.0</version>
 </dependency>
 ```
 
