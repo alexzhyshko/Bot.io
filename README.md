@@ -4,7 +4,9 @@
 <img src="https://img.shields.io/travis/schollz/croc.svg?style=flat-square" alt="Build
 Status">
 
-### The project is available as a Maven dependency:
+### The project is available on Maven Central:
+##### Maven:
+
 ```
 <dependency>
 	<groupId>io.github.alexzhyshko</groupId>
@@ -13,6 +15,10 @@ Status">
 </dependency>
 ```
 
+##### Gradle:
+```
+implementation 'io.github.alexzhyshko:BotIO:1.1.0'
+```
 ##### It's a simple Telegram Bot framework for Java to make your life easier
 
   - *Route an update to a specific class and method*
