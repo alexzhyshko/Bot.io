@@ -17,7 +17,7 @@ Status">
 
   - *Route an update to a specific class and method*
   - *Use built-in Dependency Injection for comfortable component usage*
-  - *Easily scale your app only by adding one config line and one class*
+  - *Easily scale your app only by adding one class and couple annotations*
   - *Use a built-in boilerplate class for Bot that has all you need by default*
 
 ###### For startup use `Application.start()` in your main method
