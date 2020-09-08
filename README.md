@@ -1,4 +1,4 @@
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs) 
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 <img src="https://img.shields.io/badge/version-v1.0.0-brightgreen.svg?style=flat-square" alt="Version">
 <img src="https://img.shields.io/travis/schollz/croc.svg?style=flat-square" alt="Build
 Status">
