@@ -1,6 +1,16 @@
-https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs
+[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs) <img src="https://img.shields.io/badge/version-v8.3.1-brightgreen.svg?style=flat-square" alt="Version">
+
 
 # `Bot.io`
+
+### The project is available as a Maven dependency:
+```
+<dependency>
+  <groupId>io.github.alexzhyshko</groupId>
+  <artifactId>Bot.io</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
 
 ##### It's a simple Telegram Bot framework for Java to make your life easier
 
@@ -29,7 +39,7 @@ https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs
 ##### Router
 * Use `@Configuration` annotation and extend `RouterConfiguratorAdapter` to write your custom router config. Use `add(caseNumber, methodName, class)` to add a route to a class.
 * Create a `class` class and define a method with name `methodName` inside , also you need to specify an Update argument for this method.
-* After this, any update will be routed to your method depending on case in UserService
+* After this, any update will be routed to your method depending on case in UserService([examples](src/main/cases))
 
   ##### Or
   
@@ -37,4 +47,3 @@ https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs
 * Annotate it with `@Component` and `@Case`
 * Add any method and annotate it with `@Case` and add `caseNumber` parameter in parantheses. 
 All mapping will be performed automatically
-
