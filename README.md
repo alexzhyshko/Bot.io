@@ -6,20 +6,7 @@ Status">
 
 ### The project is available on Maven Central:
 https://search.maven.org/artifact/io.github.alexzhyshko/BotIO/1.1.0/jar
-##### Maven:
 
-```
-<dependency>
-	<groupId>io.github.alexzhyshko</groupId>
-	<artifactId>BotIO</artifactId>
-	<version>1.1.0</version>
-</dependency>
-```
-
-##### Gradle:
-```
-implementation 'io.github.alexzhyshko:BotIO:1.1.0'
-```
 ##### It's a simple Telegram Bot framework for Java to make your life easier
 
   - *Route an update to a specific class and method*
