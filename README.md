@@ -1,6 +1,5 @@
 # `Bot.io`
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
-<img src="https://img.shields.io/badge/version-v1.1.0-brightgreen.svg?style=flat-square" alt="Version">
 <img src="https://img.shields.io/travis/schollz/croc.svg?style=flat-square" alt="Build
 Status">
 
