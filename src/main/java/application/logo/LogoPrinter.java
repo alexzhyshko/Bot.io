@@ -1,6 +1,7 @@
 package application.logo;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Scanner;
 
 public class LogoPrinter {
@@ -9,7 +10,8 @@ public class LogoPrinter {
 	}
 
 	public static void printLogo() throws FileNotFoundException {
-		Scanner scanner = new Scanner(LogoPrinter.class.getResourceAsStream("logo.txt"));
+		InputStream is = LogoPrinter.class.getClassLoader().getResourceAsStream("logo.txt");
+		Scanner scanner = new Scanner(is);
 		while (scanner.hasNextLine()) {
 			String data = scanner.nextLine();
 			System.out.println(data);
