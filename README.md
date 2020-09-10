@@ -25,14 +25,14 @@ https://search.maven.org/artifact/io.github.alexzhyshko/BotIO/1.3.0/jar
 
 ## Usage
 
-##### Annonations
+### Annonations
 * `@Configuration` - to mark your custom config class
 * `@Component` - to include a class to an Application Context
 * `@Inject` - to inject an object to a field
 * `@Async` - use this annotation on the type to mark that a type contains async code. Use on method to specify which method should be ran asynchronously
 * `@Case` - use this annotation on the type to mark that a type contains case mapping. Use on method to specify which method should be used for mapping. In parentheses specify `caseNumber` to map(default = 0)
 
-##### Startup
+### Startup
 For startup use this line in your main method:
 ```
     Application.start();
@@ -56,14 +56,14 @@ public class UserService {
 }
 ```
 
-##### Configuring
+### Configuring
 * Create an `application.properties` in `src/main/java`
 * Add three properties:
     * rootScanDirectory - directory in which to scan classes(for maven projects mostly is `/src/main/java/`)
     * bot.token
     * bot.username
 
-##### Router
+### Router
 
 * Use `@Configuration` annotation and extend `RouterConfiguratorAdapter` to write your custom router config. Use `add(caseNumber, methodName, class)` to add a route to a class
 * Create a `class` class and define a method with name `methodName` inside , also you need to specify an Update argument for this method
@@ -76,7 +76,7 @@ public class UserService {
 * Add any method and annotate it with `@Case` and add `caseNumber` parameter in parantheses. 
 All mapping will be performed automatically
 
-##### Sending messages
+### Sending messages
 * Use `@Inject` over a `SendMessage` class in your case class
 * Using built-in methods fill needed info for message: `chatId` and `text`.
 * (Optional) Add buttons using built-in methods
@@ -90,7 +90,7 @@ Example:
     sender.sendMessage();
 ```
 
-##### Sending documents
+### Sending documents
 * Use `@Inject` over a `DocumentSender` class in your case class
 * Using built-in methods fill needed info for message: `chatId` and `file`.
 * Invoke `sendDocument` on your DocumentSender instance to send document.
@@ -103,7 +103,7 @@ Example:
 	docSender.sendDocument();
 ```
 
-##### Loading documents
+### Loading documents
 * Use `@Inject` over a `DocumentLoader` class in your case class
 * Using `loadDocument` and pass a documentId as parameter to get a `java.io.File` result
 ```
