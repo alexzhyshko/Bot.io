@@ -3,7 +3,11 @@
 <img src="https://img.shields.io/travis/schollz/croc.svg?style=flat-square" alt="Build
 Status">
 
+## [Usage example](https://github.com/alexzhyshko/Bot.io.examples/tree/master)
+
 ### Find the latest version for your favourite build tool [here](https://search.maven.org/artifact/io.github.alexzhyshko/BotIO)
+
+
 
 ##### It's a simple Telegram Bot framework for Java to make your life easier
 
@@ -106,4 +110,3 @@ Example:
 	File result = docLoader.loadDocument(docId);
 ```
 
-## [Example](https://github.com/alexzhyshko/Bot.io.examples/tree/master)
