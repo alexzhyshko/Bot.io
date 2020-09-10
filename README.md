@@ -4,7 +4,7 @@
 Status">
 
 ### The project is available on Maven Central:
-https://search.maven.org/search?q=a:BotIO
+https://search.maven.org/artifact/io.github.alexzhyshko/BotIO
 
 ##### It's a simple Telegram Bot framework for Java to make your life easier
 
@@ -15,7 +15,7 @@ https://search.maven.org/search?q=a:BotIO
 
 ###### For startup use `Application.start()` in your main method
 ###### Configure `bot.token`, `bot.username` and `rootScanDirectory` in `application.properties` file
-###### Set your project name in `projectName` property
+###### Set your source code directory in `rootScanDirectory` property (`/src/main/java/` by default in Maven)
 ###### For appropriate work you have to define your own `UserService` class with a `getUserState()` method inside and annotate this class with `@UserServiceMarker`, as well as `@Component` annotation for the framework to use this class for routing
 
 ## Tech
@@ -59,7 +59,7 @@ public class UserService {
 ### Configuring
 * Create an `application.properties` in `src/main/java`
 * Add three properties:
-    * projectName - case sensitive name of your project
+    * rootScanDirectory - directory in which to scan classes(for maven projects mostly is `/src/main/java/`)
     * bot.token
     * bot.username
 
