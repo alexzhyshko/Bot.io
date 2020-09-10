@@ -84,10 +84,10 @@ All mapping will be performed automatically
 * After this, all attributes are restored to default and object can be reused.
 Example:
 ```
-    int userid = update.getMessage().getFrom().getId();
-    sender.setChatId(userid);
-    sender.setText("case 0 works");
-    sender.sendMessage();
+    	int userid = update.getMessage().getFrom().getId();
+    	sender.setChatId(userid);
+    	sender.setText("case 0 works");
+    	sender.sendMessage();
 ```
 
 ### Sending documents
@@ -96,7 +96,7 @@ Example:
 * Invoke `sendDocument` on your DocumentSender instance to send document.
 * After this, all attributes are restored to default and object can be reused.
 ```
-    File file = new File("path to file");
+    	File file = new File("path to file");
 	InputFile inputFile = new InputFile(file, file.getName());
 	docSender.setChatId(userid);
 	docSender.setFile(inputFile);
@@ -107,7 +107,7 @@ Example:
 * Use `@Inject` over a `DocumentLoader` class in your case class
 * Using `loadDocument` and pass a documentId as parameter to get a `java.io.File` result
 ```
-    int docId = someId;
+	int docId = someId;
 	File result = docLoader.loadDocument(docId);
 ```
 
