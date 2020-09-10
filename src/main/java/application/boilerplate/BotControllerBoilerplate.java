@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -12,6 +14,7 @@ import application.context.ApplicationContext;
 import application.context.annotation.Component;
 import application.context.annotation.Inject;
 import application.context.annotation.UserServiceMarker;
+import application.exception.FileLoadException;
 import application.routing.Router;
 
 @Component
@@ -61,5 +64,26 @@ public class BotControllerBoilerplate extends TelegramLongPollingBot{
 			e.printStackTrace();
 		}
 	}
+	
+	protected void sendDocument(SendDocument sendDocument) {
+		try {
+			execute(sendDocument);
+		} catch (TelegramApiException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	protected java.io.File loadDocument(GetFile getFile) {
+		try {
+			String filePath = execute(getFile).getFilePath();
+			return downloadFile(filePath);
+		} catch (TelegramApiException e) {
+			throw new FileLoadException("Loading file encountered a problem. File couldn't be loaded");
+		}
+		
+	}
+	
+	
+	
 	
 }
