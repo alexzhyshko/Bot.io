@@ -15,7 +15,7 @@ Status">
 
 ## Tech
 
-* **Java Core** - widespread programming language mainly used for enterprise projects
+* **Java** - widespread programming language mainly used for enterprise projects
 * **TelegramBots lib** - library for interaction with Telegram API ([link](https://github.com/rubenlagus/TelegramBots/wiki/Getting-Started), huge thanks to [**rubenlagus**](https://github.com/rubenlagus))
 
 ## Usage
