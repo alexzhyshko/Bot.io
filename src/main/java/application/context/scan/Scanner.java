@@ -28,8 +28,9 @@ public class Scanner {
 		boolean runningFromJar = false;
 		//check if now we load from filesystem or jar
 		if (uri.getScheme().equals("jar")) {
-			FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
-			myPath = fileSystem.getPath("/", packageName);
+			try(FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());){
+				myPath = fileSystem.getPath("/", packageName);
+			}
 			runningFromJar = true;
 		} else {
 			myPath = Paths.get(uri);
