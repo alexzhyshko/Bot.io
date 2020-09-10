@@ -4,7 +4,7 @@
 Status">
 
 ### The project is available on Maven Central:
-https://search.maven.org/artifact/io.github.alexzhyshko/BotIO/1.3.0/jar
+https://search.maven.org/search?q=a:BotIO
 
 ##### It's a simple Telegram Bot framework for Java to make your life easier
 
