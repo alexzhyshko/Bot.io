@@ -6,3 +6,4 @@ pom.xml
 /bin
 src/main/resources/configuration.properties
 README.md
+/alice.gpg
