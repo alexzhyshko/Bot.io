@@ -77,26 +77,26 @@ public class UserService {
 All mapping will be performed automatically
 
 ### Sending messages
-* Use `@Inject` over a `SendMessage` class in your case class
+* Use `@Inject` over a `SendMessage` field in your case class
 * Using built-in methods fill needed info for message: `chatId` and `text`.
 * (Optional) Add buttons using built-in methods
 * Invoke `sendMessage` on your MessageSender instance to send message.
 * After this, all attributes are restored to default and object can be reused.
 Example:
 ```
-    	int userid = update.getMessage().getFrom().getId();
-    	sender.setChatId(userid);
-    	sender.setText("case 0 works");
-    	sender.sendMessage();
+    int userid = update.getMessage().getFrom().getId();
+    sender.setChatId(userid);
+    sender.setText("case 0 works");
+    sender.sendMessage();
 ```
 
 ### Sending documents
-* Use `@Inject` over a `DocumentSender` class in your case class
+* Use `@Inject` over a `DocumentSender` field in your case class
 * Using built-in methods fill needed info for message: `chatId` and `file`.
 * Invoke `sendDocument` on your DocumentSender instance to send document.
 * After this, all attributes are restored to default and object can be reused.
 ```
-    	File file = new File("path to file");
+    File file = new File("path to file");
 	InputFile inputFile = new InputFile(file, file.getName());
 	docSender.setChatId(userid);
 	docSender.setFile(inputFile);
@@ -104,10 +104,10 @@ Example:
 ```
 
 ### Loading documents
-* Use `@Inject` over a `DocumentLoader` class in your case class
+* Use `@Inject` over a `DocumentLoader` field in your case class
 * Using `loadDocument` and pass a documentId as parameter to get a `java.io.File` result
 ```
-	int docId = someId;
+    int docId = someId;
 	File result = docLoader.loadDocument(docId);
 ```
 
