@@ -77,7 +77,7 @@ public class MessageSender {
 	
 	/**
 	 * Sets buttons to the reply message using the texts field, which has to be set before setting buttons.
-	 * @param columnCount - count of columns for the reply keyboard. Value: contactButtonIndex>0
+	 * @param columnCount - count of columns for the reply keyboard. ContactButtonIndex has to be greater than zero
 	 */
 	public void setButtonsWhithColumnCount(int columnCount) {
 		if(this.texts==null||this.texts.isEmpty()) {
@@ -90,8 +90,8 @@ public class MessageSender {
 	/**
 	 * Sets buttons to the reply message using the texts field, which has to be set before setting buttons.
 	 * Also sets a location request button by its index 
-	 * @param columnCount - count of columns for the reply keyboard. Value: contactButtonIndex>0
-	 * @param locationButtonIndex - index of the button, which will be set as a location request button. Value: locationButtonIndex>=0
+	 * @param columnCount - count of columns for the reply keyboard. columnCount has to be equal or greater than zero
+	 * @param locationButtonIndex - index of the button, which will be set as a location request button. locationButtonIndex has to be greater than zero
 	 */
 	public void setLocationButton(int columnCount, int locationButtonIndex) {
 		if(this.texts==null||this.texts.isEmpty()) {
@@ -104,8 +104,8 @@ public class MessageSender {
 	/**
 	 * Sets buttons to the reply message using the texts field, which has to be set before setting buttons.
 	 * Also sets a contact request button by its index 
-	 * @param columnCount - count of columns for the reply keyboard. Value: contactButtonIndex>0
-	 * @param contactButtonIndex - index of the button, which will be set as a contact request button. Value: contactButtonIndex>=0
+	 * @param columnCount - count of columns for the reply keyboard. columnCount has to be equal or greater than zero
+	 * @param contactButtonIndex - index of the button, which will be set as a contact request button. contactButtonIndex has to be greater than zero
 	 */
 	public void setContactButton(int columnCount, int contactButtonIndex) {
 		if(this.texts==null||this.texts.isEmpty()) {
@@ -116,9 +116,9 @@ public class MessageSender {
 	
 	/**
 	 * Sets buttons to the reply message using the texts field, which has to be set before setting buttons.
-	 * @param columnCount - count of columns for the reply keyboard. Value: contactButtonIndex>0
-	 * @param contactButtonIndex - index of the button, which will be set as a contact request button. Value: contactButtonIndex>=0
-	 * @param locationButtonIndex - ndex of the button, which will be set as a location request button. Value: locationButtonIndex>=0
+	 * @param columnCount - count of columns for the reply keyboard. columnCount has to be equal or greater than zero
+	 * @param contactButtonIndex - index of the button, which will be set as a contact request button. contactButtonIndex has to be greater than zero
+	 * @param locationButtonIndex - ndex of the button, which will be set as a location request button. locationButtonIndex has to be greater than zero
 	 */
 	public void setSpecialButtons(int columnCount, int contactButtonIndex, int locationButtonIndex) {
 		if(this.texts==null||this.texts.isEmpty()) {
