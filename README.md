@@ -15,7 +15,7 @@ https://search.maven.org/search?q=a:BotIO
 
 ###### For startup use `Application.start()` in your main method
 ###### Configure `bot.token`, `bot.username` and `rootScanDirectory` in `application.properties` file
-###### Set your source code directory in `rootScanDirectory` property (`/src/main/java/` by default in Maven)
+###### Set your project name in `projectName` property
 ###### For appropriate work you have to define your own `UserService` class with a `getUserState()` method inside and annotate this class with `@UserServiceMarker`, as well as `@Component` annotation for the framework to use this class for routing
 
 ## Tech
@@ -59,7 +59,7 @@ public class UserService {
 ### Configuring
 * Create an `application.properties` in `src/main/java`
 * Add three properties:
-    * rootScanDirectory - directory in which to scan classes(for maven projects mostly is `/src/main/java/`)
+    * projectName - case sensitive name of your project
     * bot.token
     * bot.username
 
