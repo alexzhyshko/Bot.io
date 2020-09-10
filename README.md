@@ -3,7 +3,7 @@
 <img src="https://img.shields.io/travis/schollz/croc.svg?style=flat-square" alt="Build
 Status">
 
-### Find the lates version for your favourite build tool [here](https://search.maven.org/artifact/io.github.alexzhyshko/BotIO)
+### Find the latest version for your favourite build tool [here](https://search.maven.org/artifact/io.github.alexzhyshko/BotIO)
 
 ##### It's a simple Telegram Bot framework for Java to make your life easier
 
