@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Scanner {
@@ -21,17 +22,18 @@ public class Scanner {
 	// key - filename
 	// value - relative path
 	public static Map<String, String> getAllFilesInProject(String path) throws IOException, URISyntaxException {
-		System.out.printf("[INFO] %s File scan started\n", LocalDateTime.now().toString());
+		System.out.printf("[INFO] %s File scan started%n", LocalDateTime.now().toString());
 		HashMap<String, String> result = new HashMap<>();
 		Properties properties = new Properties();
 		properties.load(Scanner.class.getClassLoader().getResourceAsStream("application.properties"));
-		URI uri = Scanner.class.getResource("/" + properties.getProperty("projectName")).toURI();
+		String projectName = properties.getProperty("projectName");
+		URI uri = Scanner.class.getResource("/" + projectName).toURI();
 		Path myPath;
 		boolean runningFromJar = false;
 		//check if now we load from filesystem or jar
 		if (uri.getScheme().equals("jar")) {
 			FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
-			myPath = fileSystem.getPath("/", properties.getProperty("projectName"));
+			myPath = fileSystem.getPath("/", projectName);
 			runningFromJar = true;
 		} else {
 			myPath = Paths.get(uri);
@@ -39,11 +41,13 @@ public class Scanner {
 		
 		//loading all files with 'infinite' depth
 		Stream<Path> walk = Files.walk(myPath, Integer.MAX_VALUE);
+		int count = 0;
 		//run through all files
 		for (Iterator<Path> it = walk.iterator(); it.hasNext();) {
 			Path next = it.next();
 			//check if it is source class, not metadata for instance
 			if (next.getFileName().toString().endsWith("class")) {
+				count++;
 				String relativePath = "";
 				//construct FQN using absolute path
 				if (runningFromJar) {
@@ -61,6 +65,7 @@ public class Scanner {
 			}
 		}
 		walk.close();
+		System.out.printf("[INFO] %s File scan finished, found %d files%n", LocalDateTime.now().toString(), count);
 		return result;
 	}
 
