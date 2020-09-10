@@ -14,7 +14,9 @@ public class AsyncContext {
 
 	public static void runAsync()
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		System.out.printf("[INFO] %s Async init started\n", LocalDateTime.now().toString());
+		if(asyncClasses.isEmpty()) {
+			return;
+		}
 		for (Class config : asyncClasses) {
 			AsyncInvoker.invoke(config);
 		}

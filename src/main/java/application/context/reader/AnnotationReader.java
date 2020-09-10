@@ -27,7 +27,6 @@ public class AnnotationReader {
 	public static void process(Map<String, String> files)
 			throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException, NoSuchMethodException, SecurityException {
-		System.out.printf("[INFO] %s Annotation reading started\n", LocalDateTime.now().toString());
 		for (Entry<String, String> entry : files.entrySet()) {
 			Class temp = Class.forName(entry.getValue());
 			if (hasComponentAnnotation(temp)) {
@@ -47,8 +46,8 @@ public class AnnotationReader {
 				ConfigurationContext.addConfig(temp);
 
 		}
-		addCoreFiles();
-		System.out.printf("[INFO] %s Annotation reading finished\n", LocalDateTime.now().toString());
+		//addCoreFiles();
+		System.out.printf("[INFO] %s Annotation reading finished%n", LocalDateTime.now().toString());
 	}
 
 	private static void addCoreFiles() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {

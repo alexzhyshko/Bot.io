@@ -14,7 +14,6 @@ public class Injector {
 
 	public static void inject()
 			throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		System.out.printf("[INFO] %s Dependency injection started\n", LocalDateTime.now().toString());
 		HashMap<Class, Object> allComponents = new HashMap<>();
 		allComponents.putAll(ApplicationContext.getSingletonComponents());
 		allComponents.putAll(ApplicationContext.getPrototypeComponents());
@@ -49,7 +48,7 @@ public class Injector {
 				}
 			}
 		}
-		System.out.printf("[INFO] %s Dependency injection finished\n", LocalDateTime.now().toString());
+		System.out.printf("[INFO] %s Dependency injection successful%n", LocalDateTime.now().toString());
 	}
 
 }

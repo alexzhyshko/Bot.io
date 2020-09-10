@@ -21,19 +21,15 @@ public class Scanner {
 
 	// key - filename
 	// value - relative path
-	public static Map<String, String> getAllFilesInProject(String path) throws IOException, URISyntaxException {
-		System.out.printf("[INFO] %s File scan started%n", LocalDateTime.now().toString());
+	public static Map<String, String> getAllFilesInProject(String packageName) throws IOException, URISyntaxException {
 		HashMap<String, String> result = new HashMap<>();
-		Properties properties = new Properties();
-		properties.load(Scanner.class.getClassLoader().getResourceAsStream("application.properties"));
-		String projectName = properties.getProperty("projectName");
-		URI uri = Scanner.class.getResource("/" + projectName).toURI();
+		URI uri = Scanner.class.getResource("/" + packageName).toURI();
 		Path myPath;
 		boolean runningFromJar = false;
 		//check if now we load from filesystem or jar
 		if (uri.getScheme().equals("jar")) {
 			FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
-			myPath = fileSystem.getPath("/", projectName);
+			myPath = fileSystem.getPath("/", packageName);
 			runningFromJar = true;
 		} else {
 			myPath = Paths.get(uri);
@@ -65,7 +61,7 @@ public class Scanner {
 			}
 		}
 		walk.close();
-		System.out.printf("[INFO] %s File scan finished, found %d files%n", LocalDateTime.now().toString(), count);
+		System.out.printf("[INFO] %s File scan finished in %s package, found %d files%n", LocalDateTime.now().toString(), packageName ,count);
 		return result;
 	}
 

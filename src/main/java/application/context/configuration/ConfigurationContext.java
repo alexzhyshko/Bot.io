@@ -14,11 +14,13 @@ public class ConfigurationContext {
 	}
 
 	public static void performConfiguration() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		System.out.printf("[INFO] %s Configuration started\n", LocalDateTime.now().toString());
+		if(configurationClasses.isEmpty()) {
+			return;
+		}
 		for (Class config : configurationClasses) {
 			ConfigurationInvoker.invoke(config);
 		}
-		System.out.printf("[INFO] %s Configuration finished, used %d config class(-es)\n", LocalDateTime.now().toString(), configurationClasses.size());
+		System.out.printf("[INFO] %s Configuration finished, used %d config class(-es)%n", LocalDateTime.now().toString(), configurationClasses.size());
 	}
 
 }
