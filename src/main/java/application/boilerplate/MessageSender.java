@@ -59,7 +59,7 @@ public class MessageSender {
 		this.message = new SendMessage();
 	}
 	
-	public void setTexts(List<String> texts) {
+	public void setButtonTexts(List<String> texts) {
 		this.texts = texts;
 	}
 	
