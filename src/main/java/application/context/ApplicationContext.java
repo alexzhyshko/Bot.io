@@ -30,7 +30,7 @@ public class ApplicationContext {
 	protected static void init(String path) throws IOException {
 		try {
 			LogoPrinter.printLogo();
-			System.out.printf("[WARNING] Any use of package with name '%s' can break the app because it is framework's core package%n", CORE_PACKAGE_NAME);
+			System.out.printf("[WARNING] Any conflict with package '%s' can break the app because it is framework's core package%n", CORE_PACKAGE_NAME);
 			PropertyReader.load();
 			String projectName = PropertyReader.getProperty("projectName");
 			Map<String, String> coreFiles = Scanner.getAllFilesInProject(CORE_PACKAGE_NAME);
