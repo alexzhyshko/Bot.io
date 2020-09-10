@@ -85,7 +85,7 @@ public class ApplicationContext {
 	public static Object getPrototypeComponent(Class instanceClass)
 			throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		if (!prototypeComponents.containsKey(instanceClass)) {
-			return null;
+			throw new NullPointerException("Class not found in prototype context");
 		}
 		return instanceClass.getDeclaredConstructor().newInstance();
 	}

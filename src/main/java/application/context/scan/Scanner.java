@@ -1,47 +1,66 @@
 package application.context.scan;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Enumeration;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
-import org.apache.commons.io.FileUtils;
+import java.util.stream.Stream;
 
 public class Scanner {
 
 	// key - filename
 	// value - relative path
-	public static Map<String, String> getAllFilesInProject(String path) throws IOException {
+	public static Map<String, String> getAllFilesInProject(String path) throws IOException, URISyntaxException {
 		System.out.printf("[INFO] %s File scan started\n", LocalDateTime.now().toString());
 		HashMap<String, String> result = new HashMap<>();
 		Properties properties = new Properties();
 		properties.load(Scanner.class.getClassLoader().getResourceAsStream("application.properties"));
-		String rootScanDirectory = properties.getProperty("rootScanDirectory");
-		if (rootScanDirectory == null) {
-			System.out.printf("[INFO] %s Root scan directory is set to NULL\n", LocalDateTime.now().toString(),
-					rootScanDirectory);
-			throw new NullPointerException(
-					"Root scan directory cannot be null, please set it as 'rootScanDirectory' is configuration.properties file");
+		URI uri = Scanner.class.getResource("/" + properties.getProperty("projectName")).toURI();
+		Path myPath;
+		boolean runningFromJar = false;
+		//check if now we load from filesystem or jar
+		if (uri.getScheme().equals("jar")) {
+			FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
+			myPath = fileSystem.getPath("/", properties.getProperty("projectName"));
+			runningFromJar = true;
+		} else {
+			myPath = Paths.get(uri);
 		}
-		System.out.printf("[INFO] %s Root scan directory is set to '%s'\n", LocalDateTime.now().toString(),
-				rootScanDirectory);
-		path += rootScanDirectory;
-		Collection<File> files = FileUtils.listFiles(new File(path), new String[] { "java" }, true);
-		for (File file : files) {
-			String relativePath = file.getAbsolutePath().replace("\\", "/").split(rootScanDirectory)[1]
-					.split(".java")[0].replace("/", ".");
-			String filename = file.getName().split(".java")[0];
-			result.put(filename, relativePath);
+		
+		//loading all files with 'infinite' depth
+		Stream<Path> walk = Files.walk(myPath, Integer.MAX_VALUE);
+		//run through all files
+		for (Iterator<Path> it = walk.iterator(); it.hasNext();) {
+			Path next = it.next();
+			//check if it is source class, not metadata for instance
+			if (next.getFileName().toString().endsWith("class")) {
+				String relativePath = "";
+				//construct FQN using absolute path
+				if (runningFromJar) {
+					//for loading from jar
+					relativePath = next.toAbsolutePath().toString().substring(1).replace("\\", "/").split(".class")[0].replace("/",".");
+					
+				} else {
+					//for loading from filesystem
+					relativePath = next.toAbsolutePath().toString().replace("\\", "/").split("/classes/")[1]
+							.split(".class")[0].replace("/", ".");
+				}
+				//construct filename
+				String filename = next.getFileName().toString().split(".class")[0];
+				result.put(filename, relativePath);
+			}
 		}
-		System.out.printf("[INFO] %s File scan finished, found %d files\n", LocalDateTime.now().toString(),
-				result.size());
+		walk.close();
 		return result;
 	}
 

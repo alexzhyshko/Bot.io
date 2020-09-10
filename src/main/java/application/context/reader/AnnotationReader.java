@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import application.boilerplate.BotControllerBoilerplate;
+import application.boilerplate.DocumentLoader;
+import application.boilerplate.DocumentSender;
 import application.boilerplate.MessageSender;
 import application.context.ApplicationContext;
 import application.context.annotation.Async;
@@ -50,10 +52,12 @@ public class AnnotationReader {
 	}
 
 	private static void addCoreFiles() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		ApplicationContext.putIntoSingletonContext(getInstanceOfClass(MessageSender.class));
 		ApplicationContext.putIntoSingletonContext(getInstanceOfClass(BotControllerBoilerplate.class));
 		ApplicationContext.putIntoSingletonContext(getInstanceOfClass(ConfigurationInvoker.class));
 		ApplicationContext.putIntoSingletonContext(getInstanceOfClass(Router.class));
+		ApplicationContext.putIntoPrototypeContext(getInstanceOfClass(MessageSender.class));
+		ApplicationContext.putIntoPrototypeContext(getInstanceOfClass(DocumentSender.class));
+		ApplicationContext.putIntoPrototypeContext(getInstanceOfClass(DocumentLoader.class));
 	}
 	
 	private static boolean hasAsyncAnnotation(Class clazz) {

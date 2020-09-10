@@ -31,10 +31,7 @@ public class Injector {
 						field.set(entry.getValue(), injectingObject);
 						field.setAccessible(false);
 					} else {
-						Object injectingObject = ApplicationContext.getSingletonComponent(field.getType());
-						if (injectingObject == null) {
-							injectingObject = ApplicationContext.getPrototypeComponent(field.getType());
-						}
+						Object injectingObject = ApplicationContext.getComponent(field.getType());
 						if (injectingObject == null) {
 							throw new NullPointerException("Component for type " + field.getType()
 									+ " not found in Application Context. Couldn't inject into " + clazz.getName());
