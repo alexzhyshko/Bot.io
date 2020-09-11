@@ -13,9 +13,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import application.exception.PackageNameException;
 
 public class Scanner {
 
@@ -23,7 +23,13 @@ public class Scanner {
 	// value - relative path
 	public static Map<String, String> getAllFilesInProject(String packageName) throws IOException, URISyntaxException {
 		HashMap<String, String> result = new HashMap<>();
-		URI uri = Scanner.class.getResource("/" + packageName).toURI();
+		URI uri;
+		try {
+			uri = Scanner.class.getResource("/" + packageName).toURI();
+		} catch (NullPointerException e) {
+			throw new PackageNameException(
+					"Package with name '" + packageName + "' not found or it is not a root package");
+		}
 		Path myPath;
 		boolean runningFromJar = false;
 		// check if now we load from filesystem or jar
@@ -38,37 +44,37 @@ public class Scanner {
 			}
 
 			// loading all files with 'infinite' depth
-			Stream<Path> walk = Files.walk(myPath, Integer.MAX_VALUE);
-			int count = 0;
-			// run through all files
-			for (Iterator<Path> it = walk.iterator(); it.hasNext();) {
-				Path next = it.next();
-				// check if it is source class, not metadata for instance
-				if (next.getFileName().toString().endsWith("class")) {
-					count++;
-					String relativePath = "";
-					// construct FQN using absolute path
-					if (runningFromJar) {
-						// for loading from jar
-						relativePath = next.toAbsolutePath().toString().substring(1).replace("\\", "/")
-								.split(".class")[0].replace("/", ".");
+			try (Stream<Path> walk = Files.walk(myPath, Integer.MAX_VALUE);) {
 
-					} else {
-						// for loading from filesystem
-						relativePath = next.toAbsolutePath().toString().replace("\\", "/").split("/classes/")[1]
-								.split(".class")[0].replace("/", ".");
+				int count = 0;
+				// run through all files
+				for (Iterator<Path> it = walk.iterator(); it.hasNext();) {
+					Path next = it.next();
+					// check if it is source class, not metadata for instance
+					if (next.getFileName().toString().endsWith("class")) {
+						count++;
+						String relativePath = "";
+						// construct FQN using absolute path
+						if (runningFromJar) {
+							// for loading from jar
+							relativePath = next.toAbsolutePath().toString().substring(1).replace("\\", "/")
+									.split(".class")[0].replace("/", ".");
+
+						} else {
+							// for loading from filesystem
+							relativePath = next.toAbsolutePath().toString().replace("\\", "/").split("/classes/")[1]
+									.split(".class")[0].replace("/", ".");
+						}
+						// construct filename
+						String filename = next.getFileName().toString().split(".class")[0];
+						result.put(filename, relativePath);
 					}
-					// construct filename
-					String filename = next.getFileName().toString().split(".class")[0];
-					result.put(filename, relativePath);
 				}
+				System.out.printf("[INFO] %s File scan finished in %s package, found %d files%n",
+						LocalDateTime.now().toString(), packageName, count);
 			}
-
-			walk.close();
-			System.out.printf("[INFO] %s File scan finished in %s package, found %d files%n",
-					LocalDateTime.now().toString(), packageName, count);
 		} finally {
-			if(fileSystem!=null) {
+			if (fileSystem != null) {
 				fileSystem.close();
 			}
 		}

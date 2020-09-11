@@ -13,6 +13,7 @@ import application.context.inject.Injector;
 import application.context.reader.AnnotationReader;
 import application.context.reader.PropertyReader;
 import application.context.scan.Scanner;
+import application.exception.PackageNameException;
 import application.logo.LogoPrinter;
 
 public class ApplicationContext {
@@ -33,6 +34,9 @@ public class ApplicationContext {
 			System.out.printf("[WARNING] It is not recommended to create package '%s' as it might interfere with frameworks's core package '%s'%n", CORE_PACKAGE_NAME, CORE_PACKAGE_NAME);
 			PropertyReader.load();
 			String projectName = PropertyReader.getProperty("rootPackage");
+			if(projectName == null || projectName.isEmpty()) {
+				throw new PackageNameException("Root package shouldn't be null or empty. Please encapsulate your project in a separate package");
+			}
 			Map<String, String> coreFiles = Scanner.getAllFilesInProject(CORE_PACKAGE_NAME);
 			Map<String, String> projectFiles = Scanner.getAllFilesInProject(projectName);
 			coreFiles.putAll(projectFiles);
@@ -44,7 +48,6 @@ public class ApplicationContext {
 		} catch (Exception e) {
 			e.printStackTrace();
 			destroy();
-			System.exit(1);
 		}
 		System.out.printf(
 				"[INFO] %s Application context initialization finished with %d singleton classes and %d prototype(-s)%n",
@@ -53,6 +56,7 @@ public class ApplicationContext {
 
 	protected static void destroy() {
 		System.out.println("Destroyed");
+		System.exit(1);
 	}
 
 	public static void setUserService(Class clazz) {

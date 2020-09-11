@@ -10,20 +10,20 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import application.context.ApplicationContext;
 import application.context.annotation.Component;
 import application.context.annotation.Inject;
-import application.context.annotation.UserServiceMarker;
 import application.context.reader.PropertyReader;
 import application.exception.FileLoadException;
 import application.routing.Router;
+import application.session.SessionManager;
 
 @Component
 public class BotControllerBoilerplate extends TelegramLongPollingBot {
 
 	@Inject
-	Router router;
+	private Router router;
 
-	@UserServiceMarker
-	Object userService;
-
+	@Inject
+	SessionManager sessionManager;
+	
 	private String token;
 	private String username;
 
@@ -36,6 +36,7 @@ public class BotControllerBoilerplate extends TelegramLongPollingBot {
 	public void onUpdateReceived(Update update) {
 		int userid = update.getMessage().getFrom().getId();
 		int caseNumber = ApplicationContext.getUserState(userid);
+		sessionManager.load(userid);
 		router.route(update, caseNumber);
 	}
 
