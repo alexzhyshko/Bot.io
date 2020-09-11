@@ -75,6 +75,11 @@ public class UserService {
 * Add any method and annotate it with `@Case` and add `caseNumber` parameter in parantheses. 
 All mapping will be performed automatically
 
+### Session
+* Using `@Inject` annotation inject a SessionManager field to your case class
+* To set a property, use `setProperty(key, value)`
+* To get property, use `getProperty(key, targetClass)`
+
 ### Sending messages
 * Use `@Inject` over a `SendMessage` field in your case class
 * Using built-in methods fill needed info for message: `chatId` and `text`.
