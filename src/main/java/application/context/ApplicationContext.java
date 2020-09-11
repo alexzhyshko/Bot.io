@@ -32,7 +32,7 @@ public class ApplicationContext {
 			LogoPrinter.printLogo();
 			System.out.printf("[WARNING] It is not recommended to create package '%s' as it might interfere with frameworks's core package '%s'%n", CORE_PACKAGE_NAME, CORE_PACKAGE_NAME);
 			PropertyReader.load();
-			String projectName = PropertyReader.getProperty("projectName");
+			String projectName = PropertyReader.getProperty("rootPackage");
 			Map<String, String> coreFiles = Scanner.getAllFilesInProject(CORE_PACKAGE_NAME);
 			Map<String, String> projectFiles = Scanner.getAllFilesInProject(projectName);
 			coreFiles.putAll(projectFiles);
