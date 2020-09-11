@@ -5,7 +5,7 @@ Status">
 
 ## [Usage example](https://github.com/alexzhyshko/Bot.io.examples/tree/master)
 
-### Find the latest version for your favourite build tool [here](https://search.maven.org/artifact/io.github.alexzhyshko/BotIO)
+### Find the latest version [here](https://search.maven.org/artifact/io.github.alexzhyshko/BotIO)
 
 
 
