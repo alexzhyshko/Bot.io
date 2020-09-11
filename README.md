@@ -58,7 +58,7 @@ public class UserService {
 ### Configuring
 * Create an `application.properties` in `src/main/java`
 * Add three properties:
-    * rootScanDirectory - directory in which to scan classes(for maven projects mostly is `/src/main/java/`)
+    * rootPackage - root package, where to start file scan
     * bot.token
     * bot.username
 
