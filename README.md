@@ -30,6 +30,7 @@ Status">
 * `@Inject` - to inject an object to a field
 * `@Async` - use this annotation on the type to mark that a type contains async code. Use on method to specify which method should be ran asynchronously
 * `@Case` - use this annotation on the type to mark that a type contains case mapping. Use on method to specify which method should be used for mapping. In parentheses specify `caseNumber` to map(default = 0)
+* `@UserServiceMarker` - marker annotation to mark user-created User Service class, which is to be used by core
 
 ### Startup
 For startup use this line in your main method:
