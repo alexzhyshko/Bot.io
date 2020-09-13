@@ -16,6 +16,12 @@ import application.context.scan.Scanner;
 import application.exception.PackageNameException;
 import application.logo.LogoPrinter;
 
+
+/**
+ * 
+ * @author Oleksandr Zhyshko
+ *
+ */
 public class ApplicationContext {
 
 	private ApplicationContext() {

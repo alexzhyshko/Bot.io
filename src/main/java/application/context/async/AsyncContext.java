@@ -5,9 +5,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * 
+ * @author Oleksandr Zhyshko
+ *
+ */
 public class AsyncContext {
 	private static List<Class> asyncClasses = new ArrayList<>();
 
+	private AsyncContext() {}
+	
 	public static void addAsync(Class asyncClass) {
 		asyncClasses.add(asyncClass);
 	}

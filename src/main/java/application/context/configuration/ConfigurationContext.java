@@ -5,10 +5,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 
+ * @author Oleksandr Zhyshko
+ *
+ */
 public class ConfigurationContext {
 
 	private static List<Class> configurationClasses = new ArrayList<>();
 
+	private ConfigurationContext() {}
+	
 	public static void addConfig(Class configClass) {
 		configurationClasses.add(configClass);
 	}

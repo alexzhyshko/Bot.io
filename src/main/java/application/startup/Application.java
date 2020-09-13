@@ -9,6 +9,12 @@ import application.boilerplate.BotControllerBoilerplate;
 import application.context.ApplicationContext;
 import application.context.ContextInitializer;
 
+
+/**
+ * 
+ * @author Oleksandr Zhyshko
+ *
+ */
 public class Application {
 
 	private Application() {}

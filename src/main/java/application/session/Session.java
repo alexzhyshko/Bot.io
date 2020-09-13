@@ -2,6 +2,12 @@ package application.session;
 
 import java.util.HashMap;
 
+
+/**
+ * 
+ * @author Oleksandr Zhyshko
+ *
+ */
 public class Session {
 
 	private HashMap<String, Object> values = new HashMap<>();

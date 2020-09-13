@@ -1,5 +1,11 @@
 package application.context;
 
+
+/**
+ * 
+ * @author Oleksandr Zhyshko
+ *
+ */
 public class ContextInitializer{
 
 	public static void init() {

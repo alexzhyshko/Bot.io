@@ -8,9 +8,17 @@ import application.context.ApplicationContext;
 import application.context.annotation.Component;
 import application.routing.Router;
 
+
+/**
+ * 
+ * @author Oleksandr Zhyshko
+ *
+ */
 @Component
 public class ConfigurationInvoker {
 
+	private ConfigurationInvoker() {}
+	
 	protected static <T extends ConfiguratorAdapter> void invoke(Class<T> configurator)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Router router = ApplicationContext.getComponent(Router.class);

@@ -9,6 +9,12 @@ import application.context.annotation.Component;
 import application.context.annotation.Inject;
 
 
+
+/**
+ * 
+ * @author Oleksandr Zhyshko
+ *
+ */
 @Component
 public class DocumentLoader {
 

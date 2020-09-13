@@ -4,10 +4,14 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Properties;
 
-import application.boilerplate.BotControllerBoilerplate;
 import application.exception.FileLoadException;
 import application.exception.IllegalClassStateException;
 
+/**
+ * 
+ * @author Oleksandr Zhyshko
+ *
+ */
 public class PropertyReader {
 
 	private static Properties properties = new Properties();

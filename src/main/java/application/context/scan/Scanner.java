@@ -17,8 +17,16 @@ import java.util.stream.Stream;
 
 import application.exception.PackageNameException;
 
+
+/**
+ * 
+ * @author Oleksandr Zhyshko
+ *
+ */
 public class Scanner {
 
+	private Scanner() {}
+	
 	// key - filename
 	// value - relative path
 	public static Map<String, String> getAllFilesInProject(String packageName) throws IOException, URISyntaxException {

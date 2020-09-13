@@ -4,6 +4,12 @@ import java.util.HashMap;
 
 import application.context.annotation.Component;
 
+
+/**
+ * 
+ * @author Oleksandr Zhyshko
+ *
+ */
 @Component
 public class SessionManager {
 
@@ -22,7 +28,7 @@ public class SessionManager {
 		return this.currentSession.getProperty(key, targetClass);
 	}
 	
-	public void setProperty(String key, String value) {
+	public void setProperty(String key, Object value) {
 		this.currentSession.setProperty(key, value);
 	}
 	

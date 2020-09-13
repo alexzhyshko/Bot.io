@@ -4,9 +4,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * 
+ * @author Oleksandr Zhyshko
+ *
+ */
 public class CaseContext {
 
 	private static List<Class> caseContext = new ArrayList<>();
+	
+	private CaseContext() {}
 	
 	public static void add(Class caseClass) {
 		caseContext.add(caseClass);

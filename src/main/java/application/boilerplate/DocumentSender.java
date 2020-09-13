@@ -9,13 +9,15 @@ import application.context.annotation.Inject;
 import application.context.annotation.Prototype;
 import application.exception.IllegalClassStateException;
 
-@Component
-@Prototype
+
 /**
  * Use this class to build and send a document to user
- * @author alexzhyshko
+ * @author Oleksandr Zhyshko
  *
  */
+
+@Component
+@Prototype
 public class DocumentSender {
 
 	@Inject

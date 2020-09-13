@@ -4,6 +4,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -15,6 +16,13 @@ import application.exception.FileLoadException;
 import application.routing.Router;
 import application.session.SessionManager;
 
+
+
+/**
+ * 
+ * @author Oleksandr Zhyshko
+ *
+ */
 @Component
 public class BotControllerBoilerplate extends TelegramLongPollingBot {
 
@@ -23,7 +31,7 @@ public class BotControllerBoilerplate extends TelegramLongPollingBot {
 
 	@Inject
 	SessionManager sessionManager;
-	
+
 	private String token;
 	private String username;
 
@@ -34,10 +42,22 @@ public class BotControllerBoilerplate extends TelegramLongPollingBot {
 
 	@Override
 	public void onUpdateReceived(Update update) {
-		int userid = update.getMessage().getFrom().getId();
-		int caseNumber = ApplicationContext.getUserState(userid);
-		sessionManager.load(userid);
-		router.route(update, caseNumber);
+		try {
+			int userid = -1;
+			if (update.hasCallbackQuery()) {
+				userid = update.getCallbackQuery().getFrom().getId();
+				sessionManager.load(userid);
+				int caseNumber = ApplicationContext.getUserState(userid);
+				router.routeCallback(update, caseNumber);
+			} else {
+				userid = update.getMessage().getFrom().getId();
+				sessionManager.load(userid);
+				int caseNumber = ApplicationContext.getUserState(userid);
+				router.route(update, caseNumber);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -51,6 +71,14 @@ public class BotControllerBoilerplate extends TelegramLongPollingBot {
 	}
 
 	protected void sendMessage(SendMessage sendMessage) {
+		try {
+			execute(sendMessage);
+		} catch (TelegramApiException e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected void sendMessage(EditMessageText sendMessage) {
 		try {
 			execute(sendMessage);
 		} catch (TelegramApiException e) {

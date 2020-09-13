@@ -1,7 +1,6 @@
 package application.context.inject;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -10,10 +9,17 @@ import application.context.ApplicationContext;
 import application.context.annotation.Inject;
 import application.context.annotation.UserServiceMarker;
 
+/**
+ * 
+ * @author Oleksandr Zhyshko
+ *
+ */
 public class Injector {
 
+	private Injector() {}
+	
 	public static void inject()
-			throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			throws IllegalAccessException{
 		HashMap<Class, Object> allComponents = new HashMap<>();
 		allComponents.putAll(ApplicationContext.getSingletonComponents());
 		allComponents.putAll(ApplicationContext.getPrototypeComponents());

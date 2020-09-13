@@ -4,10 +4,15 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
 
+
+/**
+ * 
+ * @author Oleksandr Zhyshko
+ *
+ */
 public class LogoPrinter {
 
-	private LogoPrinter() {
-	}
+	private LogoPrinter() {}
 
 	public static void printLogo() throws FileNotFoundException {
 		InputStream is = LogoPrinter.class.getClassLoader().getResourceAsStream("logo.txt");
