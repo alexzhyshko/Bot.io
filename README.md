@@ -72,7 +72,7 @@ public class UserService {
   
 * Create any class in your project
 * Annotate it with `@Component` and `@Case`
-* Add any method and annotate it with `@Case` and add `caseNumber` parameter in parantheses. 
+* Add any method and annotate it with `@Case`(for routing regular mesasge) or `@Callback`(for routing callback query) and add `caseNumber` parameter in parantheses. 
 All mapping will be performed automatically
 
 ### Session
@@ -94,6 +94,20 @@ Example:
     sender.sendMessage();
 ```
 
+### Editing messages
+* Use `@Inject` over an `MessageEditor` field in your case class
+* Using built-in methods fill needed info for message: `chatId`, `text` and `messageId`.
+* (Optional) Add inline buttons using built-in methods
+* Invoke `sendMessage` on your MessageEditor instance to send message.
+* After this, all attributes are restored to default and object can be reused.
+```
+    String data = update.getCallbackQuery().getData();
+	editor.setChatId(update.getCallbackQuery().getFrom().getId());
+	editor.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
+	editor.setText("New text");
+	editor.setInlineButtons(Arrays.asList("New inline"), Arrays.asList("new_inline"));
+	editor.sendMessage();
+```
 ### Sending documents
 * Use `@Inject` over a `DocumentSender` field in your case class
 * Using built-in methods fill needed info for message: `chatId` and `file`.
