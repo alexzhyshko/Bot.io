@@ -42,6 +42,7 @@ For startup use this line in your main method:
 * Define a class with any name(but logically - UserService)
 * Add `@Component` and `@UserServiceMarker` so the context can find your custom User Service
 * Create a method `int getUserState(int)` to let router use this method for routing
+* * Create a method `int setUserState(int, int)` to let router use this method for routing
 ```
 @Component
 @UserServiceMarker
@@ -51,6 +52,10 @@ public class UserService {
 	
 	public int getUserState(int userid) {
 		repository.getStateByUserId(userid);
+	}
+	
+	public int getUserState(int userid, int state) {
+		repository.setStateByUserId(userid, state);
 	}
 	
 }
@@ -75,6 +80,11 @@ public class UserService {
 * Annotate it with `@Component` and `@Case`
 * Add any method and annotate it with `@Case`(for routing regular mesasge) or `@Callback`(for routing callback query) and add `caseNumber` parameter in parantheses. 
 All mapping will be performed automatically
+
+### Routing to classes
+
+* Inject a `RouterManager` class as a field and use its methods to change user's case according to given class name.
+Can be completely replaced just by using UserService's `setUserState` method
 
 ### Session
 * Using `@Inject` annotation inject a SessionManager field to your case class
