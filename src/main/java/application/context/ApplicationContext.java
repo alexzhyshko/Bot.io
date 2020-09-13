@@ -123,8 +123,20 @@ public class ApplicationContext {
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 			throw new IllegalArgumentException(
-					"No method getUserState() specified in a class marked with @UserServiceMarker");
+					"No method getUserState(userid) specified in a class marked with @UserServiceMarker");
 		}
 	}
+	
+	public static void setUserState(int userid, int state) {
+		try {
+			userServiceClass.getDeclaredMethod("setUserState", int.class, int.class).invoke(userServiceObject,
+					userid, state);
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			throw new IllegalArgumentException(
+					"No method setUserState(userid, state) specified in a class marked with @UserServiceMarker");
+		}
+	}
+	
 
 }

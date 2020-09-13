@@ -17,7 +17,7 @@ import application.routing.Router;
 @Component
 public class ConfigurationInvoker {
 
-	private ConfigurationInvoker() {}
+	public ConfigurationInvoker() {}
 	
 	protected static <T extends ConfiguratorAdapter> void invoke(Class<T> configurator)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
