@@ -27,8 +27,9 @@
 * `@Configuration` - to mark your custom config class
 * `@Component` - to include a class to an Application Context
 * `@Inject` - to inject an object to a field
-* `@Async` - use this annotation on the type to mark that a type contains async code. Use on method to specify which method should be ran asynchronously
-* `@Case` - use this annotation on the type to mark that a type contains case mapping. Use on method to specify which method should be used for mapping. In parentheses specify `caseNumber` to map(default = 0)
+* `@Async` - use this annotation on the type to mark that it contains async code. Use on method to specify which method should be ran asynchronously
+* `@Case` - use this annotation on the type to mark that it contains case or callback mapping. Use on method to specify which method should be used for mapping. In parentheses specify `caseNumber` to map(default = 0)
+* `@Callback` - use this annotation on the method to mark that it contains callback mapping. In parentheses specify `caseNumber` to map(default = 0)
 * `@UserServiceMarker` - marker annotation to mark user-created User Service class, which is to be used by core
 
 ### Startup
