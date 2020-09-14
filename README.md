@@ -1,6 +1,6 @@
 # `Bot.io`
-[![MIT License](https://img.shields.io/badge/License-MIT-Blue.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/Build-Passing-Green.svg)](https://shields.io/)
+[![MIT License](https://img.shields.io/badge/License-MIT-Blue.svg)](LICENCE)
+[![Generic badge](https://img.shields.io/badge/Build-Passing-Green.svg)](https://mvnrepository.com/artifact/io.github.alexzhyshko/BotIO)
 
 ## [Usage example](https://github.com/alexzhyshko/Bot.io.examples/tree/master)
 
