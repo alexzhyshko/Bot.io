@@ -87,7 +87,8 @@ All mapping will be performed automatically
 Can be completely replaced just by using UserService's `setUserState` method
 
 ### Session
-* Using `@Inject` annotation inject a SessionManager field to your case class
+* Using `@Inject` annotation inject a `SessionManager` field to your case class
+* There is no need to choose proper session for user, it is auto mapped by itself
 * To set a property, use `setProperty(key, value)`
 * To get property, use `getProperty(key, targetClass)`
 
