@@ -141,4 +141,4 @@ Example:
 	File result = docLoader.loadDocument(docId);
 ```
 
-### Framework is can be built to jar using shading
+### Framework can be built to jar using shading
