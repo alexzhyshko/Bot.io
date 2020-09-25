@@ -2,11 +2,9 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-Blue.svg)](LICENSE)
 [![Generic badge](https://img.shields.io/badge/Build-Passing-Green.svg)](https://mvnrepository.com/artifact/io.github.alexzhyshko/BotIO)
 
-## [Usage example](https://github.com/alexzhyshko/Bot.io.examples/tree/master)
+# Documentation for the [latest](https://search.maven.org/artifact/io.github.alexzhyshko/BotIO) version
 
-### Find the latest version [here](https://search.maven.org/artifact/io.github.alexzhyshko/BotIO)
-
-
+##### [Usage example](https://github.com/alexzhyshko/Bot.io.examples/tree/master)(deprecated after v1.6.0)
 
 ##### It's a simple Telegram Bot framework for Java to make your life easier
 
@@ -26,6 +24,7 @@
 ### Annonations
 * `@Configuration` - to mark your custom config class
 * `@Component` - to include a class to an Application Context
+* `@Filter` - to mark rhat a class is a filter
 * `@Inject` - to inject an object to a field
 * `@Async` - use this annotation on the type to mark that it contains async code. Use on method to specify which method should be ran asynchronously
 * `@Case` - use this annotation on the type to mark that it contains case or callback mapping. Use on method to specify which method should be used for mapping. In parentheses specify `caseNumber` to map(default = 0)
@@ -70,6 +69,7 @@ public class UserService {
 
 ### Router
 
+###### (deprecated after v1.6.0(including), use the second way)
 * Use `@Configuration` annotation and extend `RouterConfiguratorAdapter` to write your custom router config. Use `add(caseNumber, methodName, class)` to add a route to a class
 * Create a `class` class and define a method with name `methodName` inside , also you need to specify an Update argument for this method
 * After this, any update will be routed to your method depending on case in UserService
@@ -77,8 +77,8 @@ public class UserService {
 ##### Or
   
 * Create any class in your project
-* Annotate it with `@Component` and `@Case`
-* Add any method and annotate it with `@Case`(for routing regular mesasge) or `@Callback`(for routing callback query) and add `caseNumber` parameter in parantheses. 
+* Annotate it with `@Component` and `@Case`, add `caseNumber` argument to `@Case`
+* Add any method and annotate it with `@Case`(for routing regular mesasge) or `@Callback`(for routing callback query) and add `message` or `command` argument respectively ro route specific message/command to metod. By default `*`, means that, if no other routes found, this route will be used. 
 All mapping will be performed automatically
 
 ### Routing to classes
@@ -92,10 +92,17 @@ Can be completely replaced just by using UserService's `setUserState` method
 * To set a property, use `setProperty(key, value)`
 * To get property, use `getProperty(key, targetClass)`
 
+### Filters
+* To declare that a class is a fiter, use `@Filter` and `@Component`
+* Add `order` argument(zero-based) to specify ordder of filter, if you have several
+* Add `enabled` argument(default true) to disable/enable filter
+* Implement core interface `FilterAdapter` and its method
+* If you want to terminate query(filter didn't match), throw a `FilterException`
+
 ### Sending messages
 * Use `@Inject` over a `SendMessage` field in your case class
 * Using built-in methods fill needed info for message: `chatId` and `text`.
-* (Optional) Add buttons using built-in methods
+* (Optional) Add buttons using built-in methods and button objects, you can set location or contact request to button
 * Invoke `sendMessage` on your MessageSender instance to send message.
 * After this, all attributes are restored to default and object can be reused.
 Example:
@@ -109,8 +116,8 @@ Example:
 ### Editing messages
 * Use `@Inject` over an `MessageEditor` field in your case class
 * Using built-in methods fill needed info for message: `chatId`, `text` and `messageId`.
-* (Optional) Add inline buttons using built-in methods
-* Invoke `sendMessage` on your MessageEditor instance to send message.
+* (Optional) Add inline buttons using built-in methods and inline button objects, you can set URL link to the button
+* Invoke `editMessage` on your MessageEditor instance to edit message.
 * After this, all attributes are restored to default and object can be reused.
 ```
     String data = update.getCallbackQuery().getData();
@@ -120,6 +127,20 @@ Example:
 	editor.setInlineButtons(Arrays.asList("New inline"), Arrays.asList("new_inline"));
 	editor.sendMessage();
 ```
+
+
+### Deleting messages
+* Use `@Inject` over an `MessageDeleter` field in your case class
+* Using built-in methods fill needed info for message: `chatId` and `messageId`.
+* Invoke `deleteMessage` on your `MessageDeleter` instance to delete message.
+* After this, all attributes are restored to default and object can be reused.
+```
+    int userid = update.getCallbackQuery().getFrom().getId();
+	deleter.setChatId(userid);
+	deleter.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
+	deleter.deleteMessage();
+```
+
 ### Sending documents
 * Use `@Inject` over a `DocumentSender` field in your case class
 * Using built-in methods fill needed info for message: `chatId` and `file`.
@@ -141,4 +162,4 @@ Example:
 	File result = docLoader.loadDocument(docId);
 ```
 
-### Framework can be built to jar using shading
+### Framework is can be built to jar using shading
