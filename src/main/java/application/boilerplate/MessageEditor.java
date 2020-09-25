@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import application.boilerplate.dto.InlineButton;
 import application.context.ApplicationContext;
 import application.context.annotation.Component;
 import application.context.annotation.Inject;
@@ -46,6 +47,13 @@ public class MessageEditor {
 	}
 
 	/**
+	 * Use this method to remove inline buttons from the message you are editing
+	 */
+	public void clearInlineButtons() {
+		this.message.setReplyMarkup(null);
+	}
+
+	/**
 	 * Send a pre-built message and, after a success, restores object's state to
 	 * default
 	 */
@@ -62,39 +70,47 @@ public class MessageEditor {
 			throw new IllegalClassStateException(
 					"Message can't be sent if its messageId is empty. Use MessageSender#setMessageId() before");
 		}
-		controller.sendMessage(this.message);
+		controller.editMessage(this.message);
 		this.message = new EditMessageText();
 	}
 
 	/**
 	 * Use this method to set inline buttons to the edited message
 	 * 
-	 * @param texts    - Texts to be set to the buttons(ordered)
-	 * @param commands - Commands to be set to buttons(ordered)
+	 * @param buttons    - Buttons to be set to the message(ordered)
 	 */
-	public void setInlineButtons(List<String> texts, List<String> commands) {
-		if (texts == null || texts.isEmpty()) {
-			throw new IllegalClassStateException("Inline buttons can't be set if texts are not set");
-		}
-		if (commands == null || commands.isEmpty()) {
-			throw new IllegalClassStateException("Inline buttons can't be set if commands are not set");
+	public void setInlineButtons(List<InlineButton> buttons) {
+		if (buttons == null || buttons.isEmpty()) {
+			throw new IllegalClassStateException("Inline buttons can't be set if the list is null or empty");
 		}
 		InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 		List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-		for (int i = 0; i < Math.round(texts.size() / 2.0d); i++) {
+		for (int i = 0; i < Math.round(buttons.size() / 2.0d); i++) {
 			List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
 			try {
 				InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
-				inlineKeyboardButton1.setText(texts.get(i * 2));
-				inlineKeyboardButton1.setCallbackData(commands.get(i * 2));
+				inlineKeyboardButton1.setText(buttons.get(i * 2).getText());
+				inlineKeyboardButton1.setCallbackData(buttons.get(i * 2).getCommand());
+				try {
+					inlineKeyboardButton1
+							.setUrl(buttons.get(i * 2).getUrl().orElseThrow(() -> new NullPointerException()));
+				} catch (NullPointerException npe) {
+					//do not add url if empty
+				}
 				keyboardButtonsRow1.add(inlineKeyboardButton1);
 			} catch (Exception e) {
 				// Do nothing if no such index
 			}
 			try {
 				InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
-				inlineKeyboardButton2.setText(texts.get(i * 2 + 1));
-				inlineKeyboardButton2.setCallbackData(commands.get(i * 2 + 1));
+				inlineKeyboardButton2.setText(buttons.get(i * 2 + 1).getText());
+				inlineKeyboardButton2.setCallbackData(buttons.get(i * 2 + 1).getCommand());
+				try {
+					inlineKeyboardButton2
+							.setUrl(buttons.get(i * 2 + 1).getUrl().orElseThrow(() -> new NullPointerException()));
+				} catch (NullPointerException npe) {
+					//do not add url if empty
+				}
 				keyboardButtonsRow1.add(inlineKeyboardButton2);
 			} catch (Exception e) {
 				// Do nothing if no such index

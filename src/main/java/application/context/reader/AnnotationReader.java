@@ -10,11 +10,13 @@ import application.context.annotation.Async;
 import application.context.annotation.Case;
 import application.context.annotation.Component;
 import application.context.annotation.Configuration;
+import application.context.annotation.Filter;
 import application.context.annotation.Prototype;
 import application.context.annotation.UserServiceMarker;
 import application.context.async.AsyncContext;
 import application.context.cases.CaseContext;
 import application.context.configuration.ConfigurationContext;
+import application.context.filter.FilterContext;
 
 /**
  * 
@@ -26,54 +28,35 @@ public class AnnotationReader {
 	private AnnotationReader() {
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void process(Map<String, String> files) throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		for (Entry<String, String> entry : files.entrySet()) {
 			Class temp = Class.forName(entry.getValue());
-			if (hasComponentAnnotation(temp)) {
-				if (hasAsyncAnnotation(temp))
+			if (temp.isAnnotationPresent(Component.class)) {
+				if (temp.isAnnotationPresent(Async.class))
 					AsyncContext.addAsync(temp);
-				if (!hasPrototypeAnnotation(temp))
+				if (!temp.isAnnotationPresent(Prototype.class))
 					ApplicationContext.putIntoSingletonContext(getInstanceOfClass(temp));
 				else
 					ApplicationContext.putIntoPrototypeContext(getInstanceOfClass(temp));
-				if (hasCaseAnnotation(temp)) {
+				if (temp.isAnnotationPresent(Case.class)) {
 					CaseContext.add(temp);
 				}
-				if (hasUserServiceAnnotation(temp)) {
+				if (temp.isAnnotationPresent(UserServiceMarker.class)) {
 					ApplicationContext.setUserService(temp);
 				}
-			} else if (hasConfigurationAnnotation(temp))
+				if(temp.isAnnotationPresent(Filter.class)) {
+					FilterContext.addFilter(temp);
+				}
+			} else if (temp.isAnnotationPresent(Configuration.class))
 				ConfigurationContext.addConfig(temp);
 
 		}
 		System.out.printf("[INFO] %s Annotation reading finished%n", LocalDateTime.now().toString());
 	}
 
-	private static boolean hasAsyncAnnotation(Class clazz) {
-		return clazz.getDeclaredAnnotation(Async.class) != null;
-	}
-
-	private static boolean hasComponentAnnotation(Class clazz) {
-		return clazz.getDeclaredAnnotation(Component.class) != null;
-	}
-
-	private static boolean hasConfigurationAnnotation(Class clazz) {
-		return clazz.getDeclaredAnnotation(Configuration.class) != null;
-	}
-
-	private static boolean hasPrototypeAnnotation(Class clazz) {
-		return clazz.getDeclaredAnnotation(Prototype.class) != null;
-	}
-
-	private static boolean hasCaseAnnotation(Class clazz) {
-		return clazz.getDeclaredAnnotation(Case.class) != null;
-	}
-
-	private static boolean hasUserServiceAnnotation(Class clazz) {
-		return clazz.getDeclaredAnnotation(UserServiceMarker.class) != null;
-	}
-
+	
 	private static Object getInstanceOfClass(Class clazz) throws InstantiationException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		return clazz.getDeclaredConstructor().newInstance();

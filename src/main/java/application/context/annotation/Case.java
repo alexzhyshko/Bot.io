@@ -17,4 +17,5 @@ import java.lang.annotation.Target;
 @Target({TYPE, METHOD})
 public @interface Case {
 	public int caseNumber() default 0;
+	public String message() default "*";
 }

@@ -2,7 +2,9 @@ package application.routing;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -19,17 +21,17 @@ import application.exception.RouteNotFoundException;
 @Component
 public class Router {
 
-	private HashMap<Integer, Route> routes;
-	private HashMap<Integer, Route> callbackRoutes;
+	private HashMap<Integer, List<Route>> routes;
+	private HashMap<Integer, List<Route>> callbackRoutes;
 
 	public Router() {
 		this.routes = new HashMap<>();
 		this.callbackRoutes = new HashMap<>();
 	}
 
-	public void route(Update update, int caseNumber) {
+	public void route(Update update, int caseNumber, String message) {
 		try {
-			Route destinationRoute = getRouteByCase(caseNumber);
+			Route destinationRoute = getRouteByCaseAndMessage(caseNumber, message);
 			if (destinationRoute == null) {
 				throw new RouteNotFoundException("Route for caseNumber=" + caseNumber + " not found in context");
 			}
@@ -42,13 +44,9 @@ public class Router {
 		}
 	}
 
-	public void routeCallback(Update update, int caseNumber) {
+	public void routeCallback(Update update, int caseNumber, String command) {
 		try {
-			Route destinationRoute = getCallbackRouteByCase(caseNumber);
-			if (destinationRoute == null) {
-				throw new RouteNotFoundException(
-						"Callback route for caseNumber=" + caseNumber + " not found in context");
-			}
+			Route destinationRoute = getCallbackRouteByCaseAndCommand(caseNumber, command);
 			Class destinationClass = destinationRoute.getRouteClass();
 			Method destinationMethod = destinationClass.getMethod(destinationRoute.getMethodName(), Update.class);
 			destinationMethod.invoke(ApplicationContext.getComponent(destinationClass), update);
@@ -58,40 +56,72 @@ public class Router {
 		}
 	}
 
-	private Route getCallbackRouteByCase(int caseNum) {
-		return callbackRoutes.get(caseNum);
-	}
-
-	private Route getRouteByCase(int caseNum) {
-		return routes.get(caseNum);
-	}
-
-	public Router add(int caseNumber, String methodName, Class className) {
-		if (this.routes.containsKey(caseNumber)) {
-			Route existed = this.routes.get(caseNumber);
-			throw new DuplicateRouteException("Route for caseNumber=" + caseNumber + " already exists in context. See "
-					+ existed.getClass() + "#" + existed.getMethodName());
+	private Route getCallbackRouteByCaseAndCommand(int caseNum, String command) {
+		List<Route> commandRoutes = callbackRoutes.get(caseNum);
+		Route result = null;
+		try {
+			result = commandRoutes.stream().filter(route -> route.getCommand().equals(command)).findFirst()
+					.orElseThrow(() -> new NullPointerException(
+							"No callback route found for " + caseNum + " case and '" + command + "' command"));
+		} catch (NullPointerException npe) {
+			result = commandRoutes.stream().filter(route -> route.getCommand().equals("*")).findFirst().orElseThrow(
+					() -> new NullPointerException("No callback route found for " + caseNum + " case command"));
 		}
-		this.routes.put(caseNumber, new Route(caseNumber, methodName, className));
+		return result;
+	}
+
+	private Route getRouteByCaseAndMessage(int caseNum, String message) {
+		List<Route> regularRoutes = routes.get(caseNum);
+		Route result = null;
+		try {
+			result = regularRoutes.stream().filter(route -> route.getCommand().equals(message)).findFirst()
+					.orElseThrow(() -> new NullPointerException(
+							"No route found for " + caseNum + " case and '" + message + "' message"));
+		} catch (NullPointerException npe) {
+			result = regularRoutes.stream().filter(route -> route.getCommand().equals("*")).findFirst()
+					.orElseThrow(() -> new NullPointerException("No route found for " + caseNum + " case command"));
+		}
+		return result;
+	}
+
+	public Router add(int caseNumber, String methodName, Class className, String message) {
+		List<Route> caseRoutes = this.routes.get(caseNumber);
+		Route routeToAdd = new Route(caseNumber, methodName, className, message);
+		if(caseRoutes==null) {
+			caseRoutes = new ArrayList<>();
+			this.routes.put(caseNumber, caseRoutes);
+		}
+		if(caseRoutes.contains(routeToAdd)) {
+			throw new DuplicateRouteException("Route for caseNumber=" + caseNumber + " and '" + message
+					+ "' message already exists in context");
+		}
+		this.routes.get(caseNumber).add(routeToAdd);
 		return this;
 	}
 
-	public Router addCallback(int caseNumber, String methodName, Class className) {
-		if (this.callbackRoutes.containsKey(caseNumber)) {
-			Route existed = this.callbackRoutes.get(caseNumber);
-			throw new DuplicateRouteException("Callback route for caseNumber=" + caseNumber
-					+ " already exists in context. See " + existed.getClass() + "#" + existed.getMethodName());
+	public Router addCallback(int caseNumber, String methodName, Class className, String command) {
+		List<Route> commandRoutes = this.callbackRoutes.get(caseNumber);
+		Route routeToAdd = new Route(caseNumber, methodName, className, command);
+		if(commandRoutes==null) {
+			commandRoutes = new ArrayList<>();
+			this.callbackRoutes.put(caseNumber, commandRoutes);
 		}
-		this.callbackRoutes.put(caseNumber, new Route(caseNumber, methodName, className));
+		if(commandRoutes.contains(routeToAdd)) {
+			throw new DuplicateRouteException("Callback oute for caseNumber=" + caseNumber + " and '" + command
+					+ "' command already exists in context");
+		}
+		this.callbackRoutes.get(caseNumber).add(routeToAdd);
 		return this;
 	}
 
 	protected void routeToClass(int userid, Class routeClass) {
 		int caseNumber = -1;
-		for(Route route : this.routes.values()) {
-			if(route.getRouteClass() == routeClass) {
-				caseNumber = route.getCase();
-				break;
+		for (List<Route> routes : this.routes.values()) {
+			for(Route route : routes) {
+				if (route.getRouteClass() == routeClass) {
+					caseNumber = route.getCase();
+					break;
+				}
 			}
 		}
 		ApplicationContext.setUserState(userid, caseNumber);
@@ -99,10 +129,12 @@ public class Router {
 
 	protected void routeCallbackToClass(int userid, Class routeClass) {
 		int caseNumber = -1;
-		for(Route route : this.callbackRoutes.values()) {
-			if(route.getRouteClass() == routeClass) {
-				caseNumber = route.getCase();
-				break;
+		for (List<Route> routes : this.callbackRoutes.values()) {
+			for(Route route : routes) {
+				if (route.getRouteClass() == routeClass) {
+					caseNumber = route.getCase();
+					break;
+				}
 			}
 		}
 		ApplicationContext.setUserState(userid, caseNumber);

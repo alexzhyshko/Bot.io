@@ -10,6 +10,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
+import application.boilerplate.dto.Button;
+import application.boilerplate.dto.InlineButton;
 import application.context.ApplicationContext;
 import application.context.annotation.Component;
 import application.context.annotation.Inject;
@@ -33,7 +35,7 @@ public class MessageSender {
 
 	private SendMessage message;
 
-	private List<String> texts;
+	private List<Button> buttons;
 
 	public MessageSender() {
 		this.message = new SendMessage();
@@ -61,21 +63,27 @@ public class MessageSender {
 					"Message can't be sent if its chatId is empty. Use MessageSender#setChatId() before");
 		}
 		controller.sendMessage(this.message);
-		this.texts = null;
+		this.buttons = null;
 		this.message = new SendMessage();
 	}
 
-	public void setButtonTexts(List<String> texts) {
-		this.texts = texts;
+	public void setButtons(List<Button> buttons) {
+		this.buttons = buttons;
+		setButtons();
+	}
+	
+	public void setButtons(List<Button> buttons, int columnCount) {
+		this.buttons = buttons;
+		setButtonsWhithColumnCount(columnCount);
 	}
 
-
+	
 	/**
 	 * Sets buttons to the reply message using the texts field, which has to be set
 	 * before setting buttons. Uses default columnCount, which is set to 2
 	 */
 	public void setButtons() {
-		if (this.texts == null || this.texts.isEmpty()) {
+		if (this.buttons == null || this.buttons.isEmpty()) {
 			throw new IllegalClassStateException(
 					"Butttons can't be set if texts are not set. Use MessageSender#setTexts() before");
 		}
@@ -90,48 +98,13 @@ public class MessageSender {
 	 *                    ContactButtonIndex has to be greater than zero
 	 */
 	public void setButtonsWhithColumnCount(int columnCount) {
-		if (this.texts == null || this.texts.isEmpty()) {
+		if (this.buttons == null || this.buttons.isEmpty()) {
 			throw new IllegalClassStateException(
 					"Butttons can't be set if texts are not set. Use MessageSender#setTexts() before");
 		}
-		setSpecialButtons(columnCount, -1, -1);
+		setSpecialButtons(columnCount);
 	}
 
-	/**
-	 * Sets buttons to the reply message using the texts field, which has to be set
-	 * before setting buttons. Also sets a location request button by its index
-	 * 
-	 * @param columnCount         - count of columns for the reply keyboard.
-	 *                            columnCount has to be equal or greater than zero
-	 * @param locationButtonIndex - index of the button, which will be set as a
-	 *                            location request button. locationButtonIndex has
-	 *                            to be greater than zero
-	 */
-	public void setLocationButton(int columnCount, int locationButtonIndex) {
-		if (this.texts == null || this.texts.isEmpty()) {
-			throw new IllegalClassStateException(
-					"Butttons can't be set if texts are not set. Use MessageSender#setTexts() before");
-		}
-		setSpecialButtons(columnCount, -1, locationButtonIndex);
-	}
-
-	/**
-	 * Sets buttons to the reply message using the texts field, which has to be set
-	 * before setting buttons. Also sets a contact request button by its index
-	 * 
-	 * @param columnCount        - count of columns for the reply keyboard.
-	 *                           columnCount has to be equal or greater than zero
-	 * @param contactButtonIndex - index of the button, which will be set as a
-	 *                           contact request button. contactButtonIndex has to
-	 *                           be greater than zero
-	 */
-	public void setContactButton(int columnCount, int contactButtonIndex) {
-		if (this.texts == null || this.texts.isEmpty()) {
-			throw new IllegalClassStateException(
-					"Butttons can't be set if texts are not set. Use MessageSender#setTexts() before");
-		}
-		setSpecialButtons(columnCount, contactButtonIndex, -1);
-	}
 
 	/**
 	 * Sets buttons to the reply message using the texts field, which has to be set
@@ -139,35 +112,26 @@ public class MessageSender {
 	 * 
 	 * @param columnCount         - count of columns for the reply keyboard.
 	 *                            columnCount has to be equal or greater than zero
-	 * @param contactButtonIndex  - index of the button, which will be set as a
-	 *                            contact request button. contactButtonIndex has to
-	 *                            be greater than zero
-	 * @param locationButtonIndex - ndex of the button, which will be set as a
-	 *                            location request button. locationButtonIndex has
-	 *                            to be greater than zero
 	 */
-	public void setSpecialButtons(int columnCount, int contactButtonIndex, int locationButtonIndex) {
-		if (this.texts == null || this.texts.isEmpty()) {
-			throw new IllegalClassStateException(
-					"Butttons can't be set if texts are not set. Use MessageSender#setTexts() before");
-		}
+	public void setSpecialButtons(int columnCount) {
 		ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
 		replyKeyboardMarkup.setSelective(true);
 		replyKeyboardMarkup.setResizeKeyboard(true);
 		replyKeyboardMarkup.setOneTimeKeyboard(false);
-		int rowsCount = (int) Math.round(texts.size() / (double) columnCount);
+		int rowsCount = (int) Math.round(buttons.size() / (double) columnCount);
 		List<KeyboardRow> keyboard = new ArrayList<>(rowsCount);
 		int buttonNum = 0;
-		int totalButtons = texts.size();
+		int totalButtons = buttons.size();
 		for (int i = 0; i < rowsCount; i++) {
 			KeyboardRow row = new KeyboardRow();
 			int iter = 0;
 			for (int j = buttonNum; j < totalButtons; j++) {
-				KeyboardButton btn = new KeyboardButton(texts.get(buttonNum));
-				if (buttonNum == contactButtonIndex) {
+				Button button = buttons.get(buttonNum);
+				KeyboardButton btn = new KeyboardButton(button.getText());
+				if (button.isSetAsContactButton()) {
 					btn.setRequestContact(true);
 				}
-				if (buttonNum == locationButtonIndex) {
+				if (button.isSetAsLocationButton()) {
 					btn.setRequestLocation(true);
 				}
 				row.add(btn);
@@ -183,34 +147,41 @@ public class MessageSender {
 		this.message.setReplyMarkup(replyKeyboardMarkup);
 	}
 
-	public void setInlineButtons(List<String> texts, List<String> commands) {
-		if (texts == null || texts.isEmpty()) {
-			throw new IllegalClassStateException(
-					"Inline buttons can't be set if texts are not set");
-		}
-		if (commands == null || commands.isEmpty()) {
-			throw new IllegalClassStateException(
-					"Inline buttons can't be set if commands are not set");
+	public void setInlineButtons(List<InlineButton> buttons) {
+		if (buttons == null || buttons.isEmpty()) {
+			throw new IllegalClassStateException("Inline buttons can't be set if the list is null or empty");
 		}
 		InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 		List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-		for (int i = 0; i < Math.round(texts.size() / 2.0d); i++) {
+		for (int i = 0; i < Math.round(buttons.size() / 2.0d); i++) {
 			List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
 			try {
 				InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
-				inlineKeyboardButton1.setText(texts.get(i * 2));
-				inlineKeyboardButton1.setCallbackData(commands.get(i * 2));
+				inlineKeyboardButton1.setText(buttons.get(i * 2).getText());
+				inlineKeyboardButton1.setCallbackData(buttons.get(i * 2).getCommand());
+				try {
+					inlineKeyboardButton1
+							.setUrl(buttons.get(i * 2).getUrl().orElseThrow(() -> new NullPointerException()));
+				} catch (NullPointerException npe) {
+					//do not add url if empty
+				}
 				keyboardButtonsRow1.add(inlineKeyboardButton1);
 			} catch (Exception e) {
-				//Do nothing if no such index
+				// Do nothing if no such index
 			}
 			try {
 				InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
-				inlineKeyboardButton2.setText(texts.get(i * 2 + 1));
-				inlineKeyboardButton2.setCallbackData(commands.get(i * 2 + 1));
+				inlineKeyboardButton2.setText(buttons.get(i * 2 + 1).getText());
+				inlineKeyboardButton2.setCallbackData(buttons.get(i * 2 + 1).getCommand());
+				try {
+					inlineKeyboardButton2
+							.setUrl(buttons.get(i * 2 + 1).getUrl().orElseThrow(() -> new NullPointerException()));
+				} catch (NullPointerException npe) {
+					//do not add url if empty
+				}
 				keyboardButtonsRow1.add(inlineKeyboardButton2);
 			} catch (Exception e) {
-				//Do nothing if no such index
+				// Do nothing if no such index
 			}
 			rowList.add(keyboardButtonsRow1);
 		}

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Properties;
 
+import application.context.annotation.Component;
 import application.exception.FileLoadException;
 import application.exception.IllegalClassStateException;
 
@@ -12,13 +13,14 @@ import application.exception.IllegalClassStateException;
  * @author Oleksandr Zhyshko
  *
  */
+@Component
 public class PropertyReader {
 
 	private static Properties properties = new Properties();
 	
 	private static final String FILENAME = "application.properties";
 	
-	private PropertyReader() {}
+	public PropertyReader() {}
 	
 	public static void load() {
 		try {

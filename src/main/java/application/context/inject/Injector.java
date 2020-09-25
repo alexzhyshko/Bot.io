@@ -24,6 +24,7 @@ public class Injector {
 		allComponents.putAll(ApplicationContext.getSingletonComponents());
 		allComponents.putAll(ApplicationContext.getPrototypeComponents());
 		Object userService = ApplicationContext.getUserServiceComponent();
+		allComponents.put(userService.getClass(), userService);
 		Class userServiceClass = userService.getClass();
 		for (Entry<Class, Object> entry : allComponents.entrySet()) {
 			Class clazz = entry.getKey();

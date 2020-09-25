@@ -18,21 +18,23 @@ public class CaseReader {
 	
 	public static void read(Class clazz) {
 		Router router = ApplicationContext.getComponent(Router.class);
+		Case classAnnotation = (Case)clazz.getAnnotation(Case.class);
+		int caseNumber = classAnnotation.caseNumber();
 		boolean foundAnnotation = false;
 		for(Method method : clazz.getDeclaredMethods()) {
 			Case caseAnnotation = method.getAnnotation(Case.class);
 			Callback callbackAnnotation = method.getAnnotation(Callback.class);
 			if(caseAnnotation!=null) {
 				foundAnnotation = true;
-				router.add(caseAnnotation.caseNumber(), method.getName(), clazz);
+				router.add(caseNumber, method.getName(), clazz, caseAnnotation.message());
 			}
 			if(callbackAnnotation!=null) {
 				foundAnnotation = true;
-				router.addCallback(callbackAnnotation.caseNumber(), method.getName(), clazz);
+				router.addCallback(caseNumber, method.getName(), clazz, callbackAnnotation.command());
 			}
 		}
 		if(!foundAnnotation) {
-			throw new NullPointerException("No case method specified in "+clazz);
+			throw new NullPointerException("No case/callback method specified in "+clazz);
 		}
 	}
 	
