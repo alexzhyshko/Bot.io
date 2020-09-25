@@ -4,7 +4,7 @@
 
 # Documentation for the [latest](https://search.maven.org/artifact/io.github.alexzhyshko/BotIO) version
 
-##### [Usage example](https://github.com/alexzhyshko/Bot.io.examples/tree/master)
+#### [Usage example](https://github.com/alexzhyshko/Bot.io.examples/tree/master)
 
 ##### It's a simple Telegram Bot framework for Java to make your life easier
 
@@ -27,8 +27,8 @@
 * `@Filter` - to mark rhat a class is a filter
 * `@Inject` - to inject an object to a field
 * `@Async` - use this annotation on the type to mark that it contains async code. Use on method to specify which method should be ran asynchronously
-* `@Case` - use this annotation on the type to mark that it contains case or callback mapping. Use on method to specify which method should be used for mapping. In parentheses specify `caseNumber` to map(default = 0)
-* `@Callback` - use this annotation on the method to mark that it contains callback mapping. In parentheses specify `caseNumber` to map(default = 0)
+* `@Case` - use this annotation on the type to mark that it contains case or callback mapping. Use on method to specify which method should be used for mapping, in parentheses specify `message` to map(default = *)
+* `@Callback` - use this annotation on the method to mark that it contains callback mapping. In parentheses specify `command` to map(default = *)
 * `@UserServiceMarker` - marker annotation to mark user-created User Service class, which is to be used by core
 
 ### Startup
