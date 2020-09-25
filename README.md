@@ -4,7 +4,7 @@
 
 # Documentation for the [latest](https://search.maven.org/artifact/io.github.alexzhyshko/BotIO) version
 
-##### [Usage example](https://github.com/alexzhyshko/Bot.io.examples/tree/master)(deprecated after v1.6.0)
+##### [Usage example](https://github.com/alexzhyshko/Bot.io.examples/tree/master)
 
 ##### It's a simple Telegram Bot framework for Java to make your life easier
 
