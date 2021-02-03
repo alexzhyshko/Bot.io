@@ -8,7 +8,7 @@ public class RouterManager {
 
 	@Inject
 	private Router router;
-	
+
 	public void routeToClass(int userid, Class routeClass) {
 		this.router.routeToClass(userid, routeClass);
 	}
@@ -16,5 +16,5 @@ public class RouterManager {
 	public void routeCallbackToClass(int userid, Class routeClass) {
 		this.router.routeCallbackToClass(userid, routeClass);
 	}
-	
+
 }

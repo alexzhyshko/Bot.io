@@ -14,6 +14,7 @@ import application.context.annotation.Component;
 import application.context.annotation.Inject;
 import application.context.filter.FilterContext;
 import application.context.reader.PropertyReader;
+import application.exception.ApplicationStartException;
 import application.exception.FileLoadException;
 import application.routing.Router;
 import application.session.SessionManager;
@@ -40,30 +41,66 @@ public class BotControllerBoilerplate extends TelegramLongPollingBot {
 		this.username = PropertyReader.getProperty("bot.username");
 	}
 
-	@Override
-	public void onUpdateReceived(Update update) {
-		if (FilterContext.filter(update)) {
-			try {
-				int userid = -1;
-				if (update.hasCallbackQuery()) {
-					userid = update.getCallbackQuery().getFrom().getId();
-					sessionManager.load(userid);
-					int caseNumber = ApplicationContext.getUserState(userid);
-					String command = update.getCallbackQuery().getData();
-					router.routeCallback(update, caseNumber, command);
-				} else {
-					userid = update.getMessage().getFrom().getId();
-					sessionManager.load(userid);
-					int caseNumber = ApplicationContext.getUserState(userid);
-					String message = update.getMessage().getText();
-					router.route(update, caseNumber, message);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    @Override
+    public void onUpdateReceived(Update update) {
+        try {
+            if (!FilterContext.filter(update)) {
+                return;
+            }
+            
+            int userid = -1;
+            if (update.hasCallbackQuery()) {
+                userid = getUserIdFromCallback(update);
+            } else {
+                userid = getUserIdFromMessage(update);
+            }
 
+            if (userid == -1) {
+                throw new ApplicationStartException("User Id could not be obtained while receiving the update");
+            }
+
+            setCurrentUserId(userid);
+
+            loadSessionForUser(userid);
+
+            int stateNumber = getUserState(userid);
+            if (update.hasCallbackQuery()) {
+                String command = update.getCallbackQuery().getData();
+                router.routeCallback(update, stateNumber, command);
+            } else {
+                String message = update.getMessage().getText();
+                router.route(update, stateNumber, message);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+	private void setCurrentUserId(int userid) {
+	    ApplicationContext.setCurrentUserId(userid);
+	}
+	
+	private int getCurrentUserId() {
+	    return ApplicationContext.getCurrentUserId();
+	}
+	
+	private int getUserState(int userid) {
+	    return ApplicationContext.getUserState(userid);
+	}
+	
+	private void loadSessionForUser(int userid) {
+	    sessionManager.load(userid);
+	}
+	
+	private int getUserIdFromCallback(Update update) {
+	    return update.getCallbackQuery().getFrom().getId();
+	}
+	
+	private int getUserIdFromMessage(Update update) {
+        return update.getMessage().getFrom().getId();
+    }
+	
 	@Override
 	public String getBotUsername() {
 		return this.username;
@@ -89,7 +126,7 @@ public class BotControllerBoilerplate extends TelegramLongPollingBot {
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected void deleteMessage(DeleteMessage deleteMessage) {
 		try {
 			execute(deleteMessage);

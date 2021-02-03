@@ -1,18 +1,19 @@
 package application.context;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 import application.context.async.AsyncContext;
-import application.context.cases.CaseContext;
-import application.context.configuration.ConfigurationContext;
 import application.context.inject.Injector;
 import application.context.reader.AnnotationReader;
 import application.context.reader.PropertyReader;
 import application.context.scan.Scanner;
+import application.context.states.StateContext;
 import application.exception.PackageNameException;
 import application.logo.LogoPrinter;
 
@@ -32,25 +33,26 @@ public class ApplicationContext {
 	protected static Class userServiceClass;
 	protected static Object userServiceObject;
 
+	private static int CURRENT_USER_ID;
+	
 	private static final String CORE_PACKAGE_NAME = "application";
 
 	protected static void init(String path) throws IOException {
 		try {
-			LogoPrinter.printLogo();
-			System.out.printf("[WARNING] It is not recommended to create package '%s' as it might interfere with frameworks's core package '%s'%n", CORE_PACKAGE_NAME, CORE_PACKAGE_NAME);
-			PropertyReader.load();
-			String projectName = PropertyReader.getProperty("rootPackage");
-			if(projectName == null || projectName.isEmpty()) {
+		    printLogo();
+		    printWarningMessage();
+		    loadProperties();
+			String rootPackageName = getRootPackageName();
+			if(rootPackageName == null || rootPackageName.isEmpty()) {
 				throw new PackageNameException("Root package shouldn't be null or empty. Please encapsulate your project in a separate package");
 			}
-			Map<String, String> coreFiles = Scanner.getAllFilesInProject(CORE_PACKAGE_NAME);
-			Map<String, String> projectFiles = Scanner.getAllFilesInProject(projectName);
-			coreFiles.putAll(projectFiles);
-			AnnotationReader.process(coreFiles);
-			Injector.inject();
-			ConfigurationContext.performConfiguration();
-			CaseContext.init();
-			AsyncContext.runAsync();
+			Map<String, String> coreFiles = getAllFilesInCorePackage();
+			Map<String, String> projectFiles = Scanner.getAllFilesInPackage(rootPackageName);
+			combineFileMaps(coreFiles, projectFiles);
+			performAnnotationReadingAmongGivenFiles(coreFiles);
+			injectDependencies();
+			initializeCasesContext();
+			startAsynchronousCode();
 		} catch (Exception e) {
 			e.printStackTrace();
 			destroy();
@@ -59,7 +61,47 @@ public class ApplicationContext {
 				"[INFO] %s Application context initialization finished with %d singleton classes and %d prototype(-s)%n",
 				LocalDateTime.now().toString(), singletonComponents.size(), prototypeComponents.size());
 	}
+	
+    private static void combineFileMaps(Map<String, String> firstMap, Map<String, String> secondMap) {
+	    firstMap.putAll(secondMap);
+    }
 
+    private static void printLogo() throws FileNotFoundException {
+	    LogoPrinter.printLogo();
+	}
+
+	private static void printWarningMessage() {
+	    System.out.printf("[WARNING] It is not recommended to create package '%s' as it might interfere with frameworks's core package '%s'%n", CORE_PACKAGE_NAME, CORE_PACKAGE_NAME);
+	}
+	
+	private static void loadProperties() {
+	    PropertyReader.load();
+	}
+	
+	private static String getRootPackageName() {
+	    return PropertyReader.getProperty("rootPackage");
+	}
+	
+	private static Map<String, String> getAllFilesInCorePackage() throws IOException, URISyntaxException{
+	    return Scanner.getAllFilesInPackage(CORE_PACKAGE_NAME);
+	}
+	
+	private static void performAnnotationReadingAmongGivenFiles(Map<String, String> files) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	    AnnotationReader.process(files);
+	}
+	
+	private static void injectDependencies() throws IllegalAccessException {
+	    Injector.inject();
+	}
+	
+	private static void initializeCasesContext() {
+        StateContext.init();
+    }
+	
+    private static void startAsynchronousCode() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        AsyncContext.runAsync();
+    }
+	
 	protected static void destroy() {
 		System.out.println("Destroyed");
 		System.exit(1);
@@ -136,6 +178,22 @@ public class ApplicationContext {
 			throw new IllegalArgumentException(
 					"No method setUserState(userid, state) specified in a class marked with @UserServiceMarker");
 		}
+	}
+	
+	/**
+	 * Do not use this method in asynchronous code, as it may lead to unexpected return values
+	 * @return Current User's Id
+	 */
+	public static int getCurrentUserId() {
+	    return CURRENT_USER_ID;
+	}
+	
+	
+	/**
+     * Do not use this method in asynchronous code, as it may lead to unexpected consequences
+     */
+	public static void setCurrentUserId(int userid) {
+	    CURRENT_USER_ID = userid;
 	}
 	
 

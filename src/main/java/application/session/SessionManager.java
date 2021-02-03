@@ -28,7 +28,7 @@ public class SessionManager {
 		return this.currentSession.getProperty(key, targetClass);
 	}
 	
-	public void setProperty(String key, Object value) {
+	public <T> void setProperty(String key, T value) {
 		this.currentSession.setProperty(key, value);
 	}
 	

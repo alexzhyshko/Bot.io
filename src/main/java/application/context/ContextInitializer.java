@@ -1,5 +1,6 @@
 package application.context;
 
+import application.boilerplate.UserService;
 
 /**
  * 
@@ -11,6 +12,7 @@ public class ContextInitializer{
 	public static void init() {
 		String path = System.getProperty("user.dir");
 		try {
+			ApplicationContext.setUserService(UserService.class);
 			ApplicationContext.init(path);
 		} catch (Exception e) {
 			e.printStackTrace();

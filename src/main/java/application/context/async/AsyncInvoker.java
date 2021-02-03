@@ -3,7 +3,7 @@ package application.context.async;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import application.configurators.ConfiguratorAdapter;
+import application.adapters.ConfiguratorAdapter;
 import application.context.ApplicationContext;
 import application.context.annotation.Async;
 

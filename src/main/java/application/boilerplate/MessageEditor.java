@@ -57,10 +57,10 @@ public class MessageEditor {
 	 * Send a pre-built message and, after a success, restores object's state to
 	 * default
 	 */
-	public void sendMessage() {
-		if (this.message.getText().isEmpty()) {
+	public void editMessage() {
+		if (this.message.getText()==null || this.message.getText().isEmpty()) {
 			throw new IllegalClassStateException(
-					"Message can't be sent if its text is empty. Use MessageSender#setText() before");
+					"Message can't be sent if its text is null or empty. Use MessageSender#setText() before");
 		}
 		if (this.message.getChatId() == null || this.message.getChatId().isEmpty()) {
 			throw new IllegalClassStateException(

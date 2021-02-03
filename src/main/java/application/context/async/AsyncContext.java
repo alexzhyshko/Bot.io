@@ -25,9 +25,17 @@ public class AsyncContext {
 		if(asyncClasses.isEmpty()) {
 			return;
 		}
-		for (Class config : asyncClasses) {
-			AsyncInvoker.invoke(config);
-		}
-		System.out.printf("[INFO] %s Async init finished, found %d async class(-es)\n", LocalDateTime.now().toString(), asyncClasses.size());
+		invokeAsyncMethods();
+		printMessage();
+	}
+	
+	private static void invokeAsyncMethods() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	    for (Class config : asyncClasses) {
+            AsyncInvoker.invoke(config);
+        }
+    }
+
+    private static void printMessage() {
+	    System.out.printf("[INFO] %s Async init finished, found %d async class(-es)%n", LocalDateTime.now().toString(), asyncClasses.size());
 	}
 }

@@ -28,8 +28,8 @@ public class Scanner {
 	private Scanner() {}
 	
 	// key - filename
-	// value - relative path
-	public static Map<String, String> getAllFilesInProject(String packageName) throws IOException, URISyntaxException {
+	// value - FQN
+	public static Map<String, String> getAllFilesInPackage(String packageName) throws IOException, URISyntaxException {
 		HashMap<String, String> result = new HashMap<>();
 		URI uri;
 		try {
@@ -38,48 +38,43 @@ public class Scanner {
 			throw new PackageNameException(
 					"Package with name '" + packageName + "' not found or it is not a root package");
 		}
-		Path myPath;
+		Path pathToProject;
 		boolean runningFromJar = false;
-		// check if now we load from filesystem or jar
 		FileSystem fileSystem = null;
 		try {
+		 // check if now we load from filesystem or jar
 			if (uri.getScheme().equals("jar")) {
 				fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
-				myPath = fileSystem.getPath("/", packageName);
+				pathToProject = fileSystem.getPath("/", packageName);
 				runningFromJar = true;
 			} else {
-				myPath = Paths.get(uri);
+			    pathToProject = Paths.get(uri);
 			}
 
 			// loading all files with 'infinite' depth
-			try (Stream<Path> walk = Files.walk(myPath, Integer.MAX_VALUE);) {
-
-				int count = 0;
+			try (Stream<Path> fileWalk = createFileWalkStream(pathToProject)) {
+				int classFilesCount = 0;
 				// run through all files
-				for (Iterator<Path> it = walk.iterator(); it.hasNext();) {
-					Path next = it.next();
+				for (Iterator<Path> fileIterator = fileWalk.iterator(); fileIterator.hasNext();) {
+					Path pathToFile = fileIterator.next();
 					// check if it is source class, not metadata for instance
-					if (next.getFileName().toString().endsWith("class")) {
-						count++;
-						String relativePath = "";
+					if (pathToFile.getFileName().toString().endsWith("class")) {
+					    classFilesCount++;
+						String fullyQualifiedName;
 						// construct FQN using absolute path
 						if (runningFromJar) {
 							// for loading from jar
-							relativePath = next.toAbsolutePath().toString().substring(1).replace("\\", "/")
-									.split(".class")[0].replace("/", ".");
-
+						    fullyQualifiedName = constructFQNForLoadingFromJar(pathToFile);
 						} else {
 							// for loading from filesystem
-							relativePath = next.toAbsolutePath().toString().replace("\\", "/").split("/classes/")[1]
-									.split(".class")[0].replace("/", ".");
+						    fullyQualifiedName = constructFQNForLoadingFromFilesystem(pathToFile);
 						}
-						// construct filename
-						String filename = next.getFileName().toString().split(".class")[0];
-						result.put(filename, relativePath);
+						// construct FQN
+						String className = constructFileName(pathToFile);
+						result.put(className, fullyQualifiedName);
 					}
 				}
-				System.out.printf("[INFO] %s File scan finished in %s package, found %d files%n",
-						LocalDateTime.now().toString(), packageName, count);
+				printMessage(packageName, classFilesCount);
 			}
 		} finally {
 			if (fileSystem != null) {
@@ -88,5 +83,28 @@ public class Scanner {
 		}
 		return result;
 	}
+	
+	private static Stream<Path> createFileWalkStream(Path path) throws IOException{
+	    return Files.walk(path, Integer.MAX_VALUE);
+	}
+	
+	private static String constructFQNForLoadingFromJar(Path path) {
+	    return path.toAbsolutePath().toString().substring(1).replace("\\", "/")
+                .split(".class")[0].replace("/", ".");
+	}
+	
+	private static String constructFQNForLoadingFromFilesystem(Path path) {
+	    return path.toAbsolutePath().toString().replace("\\", "/").split("/classes/")[1]
+                .split(".class")[0].replace("/", ".");
+	}
+	
+	private static String constructFileName(Path path) {
+	    return path.getFileName().toString().split(".class")[0];
+	}
+	
+	private static void printMessage(String packageName, int classFilesCount) {
+        System.out.printf("[INFO] %s File scan finished in %s package, found %d files%n",
+                LocalDateTime.now().toString(), packageName, classFilesCount);
+    }
 
 }

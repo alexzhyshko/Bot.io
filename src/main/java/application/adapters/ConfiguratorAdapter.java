@@ -1,4 +1,4 @@
-package application.configurators;
+package application.adapters;
 
 
 /**

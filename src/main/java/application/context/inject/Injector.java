@@ -55,7 +55,11 @@ public class Injector {
 				}
 			}
 		}
-		System.out.printf("[INFO] %s Dependency injection successful%n", LocalDateTime.now().toString());
+		printMessage();
+	}
+	
+	private static void printMessage() {
+	    System.out.printf("[INFO] %s Dependency injection successful%n", LocalDateTime.now().toString());
 	}
 
 }
