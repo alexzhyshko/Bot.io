@@ -82,7 +82,7 @@ public class MessageSender {
 	 * Sets buttons to the reply message using the texts field, which has to be set
 	 * before setting buttons. Uses default columnCount, which is set to 2
 	 */
-	public void setButtons() {
+	private void setButtons() {
 		if (this.buttons == null || this.buttons.isEmpty()) {
 			throw new IllegalClassStateException(
 					"Butttons can't be set if texts are not set. Use MessageSender#setTexts() before");

@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 
 import application.context.ApplicationContext;
 import application.context.annotation.Callback;
-import application.context.annotation.Case;
+import application.context.annotation.Message;
 import application.context.annotation.State;
 import application.routing.Router;
 
@@ -23,7 +23,7 @@ public class StateReader {
 		int stateNumber = classAnnotation.value();
 		boolean foundAnnotation = false;
 		for(Method method : clazz.getDeclaredMethods()) {
-			Case caseAnnotation = method.getAnnotation(Case.class);
+			Message caseAnnotation = method.getAnnotation(Message.class);
 			Callback callbackAnnotation = method.getAnnotation(Callback.class);
 			if(caseAnnotation!=null) {
 				foundAnnotation = true;

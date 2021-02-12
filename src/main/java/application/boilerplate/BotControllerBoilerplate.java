@@ -44,10 +44,6 @@ public class BotControllerBoilerplate extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         try {
-            if (!FilterContext.filter(update)) {
-                return;
-            }
-            
             int userid = -1;
             if (update.hasCallbackQuery()) {
                 userid = getUserIdFromCallback(update);
@@ -63,7 +59,11 @@ public class BotControllerBoilerplate extends TelegramLongPollingBot {
 
             loadSessionForUser(userid);
 
-            int stateNumber = getUserState(userid);
+            if (!FilterContext.filter(update)) {
+                return;
+            }
+            
+            int stateNumber = ApplicationContext.getCurrentUserState();
             if (update.hasCallbackQuery()) {
                 String command = update.getCallbackQuery().getData();
                 router.routeCallback(update, stateNumber, command);

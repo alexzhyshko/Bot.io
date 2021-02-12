@@ -170,6 +170,10 @@ public class ApplicationContext {
 		}
 	}
 	
+	public static int getCurrentUserState() {
+	    return getUserState(getCurrentUserId());
+	}
+	
 	public static void setUserState(int userid, int state) {
 		try {
 			userServiceClass.getDeclaredMethod("setUserState", int.class, int.class).invoke(userServiceObject,

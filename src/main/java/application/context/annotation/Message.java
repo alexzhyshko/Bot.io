@@ -15,6 +15,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RUNTIME)
 @Target({METHOD})
-public @interface Case {
+public @interface Message {
 	public String message() default "*";
 }
