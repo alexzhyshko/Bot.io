@@ -93,7 +93,7 @@ Can be completely replaced just by using UserService's `setUserState` method
 * If you want to terminate query(filter didn't match), throw a `FilterException`
 
 ### Sending messages
-* Use `@Inject` over a `SendMessage` field in your case class
+* Use `@Inject` over a `MessageSender` field in your case class
 * Using built-in methods fill needed info for message: `chatId` and `text`.
 * (Optional) Add buttons using built-in methods and button objects, you can set location or contact request to button
 * Invoke `sendMessage` on your MessageSender instance to send message.
