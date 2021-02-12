@@ -31,23 +31,20 @@ public class AnnotationReader {
 	public static void process(Map<String, String> files) throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		for (Entry<String, String> entry : files.entrySet()) {
-			Class temp = Class.forName(entry.getValue());
-			if (temp.isAnnotationPresent(Component.class)) {
-				if(Arrays.asList(temp.getGenericInterfaces()).contains(UserServiceAdapter.class)){
-					ApplicationContext.setUserService(temp);
-				}
-				if (temp.isAnnotationPresent(Async.class))
-					AsyncContext.addAsync(temp);
-				if (!temp.isAnnotationPresent(Prototype.class))
-					ApplicationContext.putIntoSingletonContext(getInstanceOfClass(temp));
+			Class currentClass = Class.forName(entry.getValue());
+			if (currentClass.isAnnotationPresent(Component.class)) {
+				if (Arrays.asList(currentClass.getGenericInterfaces()).contains(UserServiceAdapter.class))
+					ApplicationContext.setUserService(currentClass);
+				if (currentClass.isAnnotationPresent(Async.class))
+					AsyncContext.addAsync(currentClass);
+				if (currentClass.isAnnotationPresent(Prototype.class))
+					ApplicationContext.putIntoPrototypeContext(getInstanceOfClass(currentClass));
 				else
-					ApplicationContext.putIntoPrototypeContext(getInstanceOfClass(temp));
-				if (temp.isAnnotationPresent(State.class)) {
-					StateContext.add(temp);
-				}
-				if(temp.isAnnotationPresent(Filter.class)) {
-					FilterContext.addFilter(temp);
-				}
+					ApplicationContext.putIntoSingletonContext(getInstanceOfClass(currentClass));
+				if (currentClass.isAnnotationPresent(State.class)) 
+					StateContext.add(currentClass);
+				if (currentClass.isAnnotationPresent(Filter.class)) 
+					FilterContext.addFilter(currentClass);
 			}
 
 		}

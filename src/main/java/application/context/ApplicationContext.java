@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import application.context.async.AsyncContext;
 import application.context.inject.Injector;
@@ -195,6 +196,12 @@ public class ApplicationContext {
 	public static void setCurrentUserId(int userid) {
 	    CURRENT_USER_ID = userid;
 	}
+
+	
+    public static Object getComponentByQualifier(String qualifier) {
+        Optional<Object> component = singletonComponents.entrySet().stream().filter(entry->entry.getKey().getSimpleName().equalsIgnoreCase(qualifier)).map(entry->entry.getValue()).findFirst(); 
+        return component.isPresent()?component.get():null;
+    }
 	
 
 }
