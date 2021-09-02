@@ -38,6 +38,8 @@ For startup use this line in your main method:
 ```
 
 ### UserService
+The framework offers a default in-memory user state tracking mechanism, but in order to override it, developer can perform next actions. For example, you need to
+implement a mechanism to store user states to the database, in this case User Service overriding will come handy
 * Define a class with any name(but logically - UserService)
 * Add `@Component` and `@UserServiceMarker` so the context can find your custom User Service
 * Create a method `int getUserState(int)` to let router use this method for routing
