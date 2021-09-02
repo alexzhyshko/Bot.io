@@ -27,7 +27,7 @@
 * `@Inject` - to inject an object to a field
 * `@Async` - use this annotation on the type to mark that it contains async code. Use on method to specify which method should be ran asynchronously
 * `@State` - use this annotation over a type to mark that it contains State logic, in parantheses specify stateNumber (default = 0)
-* `@Case` - use this annotation over the method to specify which method should be used for mapping, in parentheses specify `message` to map(default = *)
+* `@Message` - use this annotation over the method to specify which method should be used for mapping, in parentheses specify `message` to map(default = *)
 * `@Callback` - use this annotation on the method to mark that it contains callback mapping. In parentheses specify `command` to map(default = *)
 * `@UserServiceMarker` - marker annotation to mark user-created User Service class, which is to be used by core
 
