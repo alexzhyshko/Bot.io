@@ -72,8 +72,8 @@ public class UserService {
 ### Router
   
 * Create any class in your project
-* Annotate it with `@Component` and `@Case`, add `caseNumber` argument to `@Case`
-* Add any method and annotate it with `@Case`(for routing regular mesasge) or `@Callback`(for routing callback query) and add `message` or `command` argument respectively ro route specific message/command to metod. By default `*`, means that, if no other routes found, this route will be used. 
+* Annotate it with `@Component` and `@State`, add `stateNumber` argument to `@State`
+* Add any method and annotate it with `@State`(for routing regular message) or `@Callback`(for routing callback query) and add `message` or `command` argument respectively ro route specific message/command to metod. By default `*`, means that, if no other routes found, this route will be used. 
 All mapping will be performed automatically
 
 ### Routing to classes
