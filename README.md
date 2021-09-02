@@ -100,7 +100,7 @@ Can be completely replaced just by using UserService's `setUserState` method
 * After this, all attributes are restored to default and object can be reused.
 Example:
 ```
-    int userid = update.getMessage().getFrom().getId();
+    int userid = ApplicationContext.getCurrentUserId();
     sender.setChatId(userid);
     sender.setText("case 0 works");
     sender.sendMessage();
@@ -114,7 +114,7 @@ Example:
 * After this, all attributes are restored to default and object can be reused.
 ```
     String data = update.getCallbackQuery().getData();
-	editor.setChatId(update.getCallbackQuery().getFrom().getId());
+	editor.setChatId(ApplicationContext.getCurrentUserId());
 	editor.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
 	editor.setText("New text");
 	editor.setInlineButtons(Arrays.asList("New inline"), Arrays.asList("new_inline"));
@@ -128,10 +128,10 @@ Example:
 * Invoke `deleteMessage` on your `MessageDeleter` instance to delete message.
 * After this, all attributes are restored to default and object can be reused.
 ```
-    int userid = update.getCallbackQuery().getFrom().getId();
-	deleter.setChatId(userid);
-	deleter.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
-	deleter.deleteMessage();
+    int userid = ApplicationContext.getCurrentUserId();
+    deleter.setChatId(userid);
+    deleter.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
+    deleter.deleteMessage();
 ```
 
 ### Sending documents
@@ -141,10 +141,10 @@ Example:
 * After this, all attributes are restored to default and object can be reused.
 ```
     File file = new File("path to file");
-	InputFile inputFile = new InputFile(file, file.getName());
-	docSender.setChatId(userid);
-	docSender.setFile(inputFile);
-	docSender.sendDocument();
+    InputFile inputFile = new InputFile(file, file.getName());
+    docSender.setChatId(userid);
+    docSender.setFile(inputFile);
+    docSender.sendDocument();
 ```
 
 ### Loading documents
@@ -152,7 +152,7 @@ Example:
 * Using `loadDocument` and pass a documentId as parameter to get a `java.io.File` result
 ```
     int docId = someId;
-	File result = docLoader.loadDocument(docId);
+    File result = docLoader.loadDocument(docId);
 ```
 
 ### Framework can be built to jar using shading
