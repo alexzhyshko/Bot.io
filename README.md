@@ -53,7 +53,7 @@ public class UserService {
 		repository.getStateByUserId(userid);
 	}
 	
-	public int getUserState(int userid, int state) {
+	public int setUserState(int userid, int state) {
 		repository.setStateByUserId(userid, state);
 	}
 	
