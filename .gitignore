@@ -2,6 +2,7 @@ pom.xml
 .classpath
 .project
 .settings
+.idea
 /target
 /bin
 src/main/resources/configuration.properties
