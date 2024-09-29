@@ -32,5 +32,4 @@ public class DefaultResponseExecutor implements ResponseExecutor {
             LOG.error("Error during executing {}", method, e);
         }
     }
-
 }

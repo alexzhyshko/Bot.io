@@ -1,5 +1,6 @@
 package io.github.zhyshko.core.filter.impl;
 
+import io.github.zhyshko.core.exception.FilterException;
 import io.github.zhyshko.core.filter.FilterAdapter;
 import io.github.zhyshko.core.response.ResponseEntity;
 import io.github.zhyshko.core.util.UpdateWrapper;
@@ -29,10 +30,14 @@ public class FilterChain {
     }
 
     public void doFilter() {
-        if(filterPosition < filters.size()-1) {
+        if (filterPosition < filters.size() - 1) {
             filterPosition++;
             FilterAdapter nextFilter = filters.get(filterPosition);
-            nextFilter.filter(this, updateWrapper, telegramClient);
+            try {
+                nextFilter.filter(this, updateWrapper, telegramClient);
+            } catch (FilterException fe) {
+                throw fe;
+            }
         } else {
             responseEntity = this.handler.apply(updateWrapper);
         }

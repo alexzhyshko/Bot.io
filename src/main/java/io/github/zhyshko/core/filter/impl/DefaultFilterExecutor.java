@@ -1,5 +1,6 @@
 package io.github.zhyshko.core.filter.impl;
 
+import io.github.zhyshko.core.exception.FilterException;
 import io.github.zhyshko.core.filter.FilterAdapter;
 import io.github.zhyshko.core.filter.FilterExecutor;
 import io.github.zhyshko.core.response.ResponseEntity;
@@ -23,10 +24,14 @@ public class DefaultFilterExecutor implements FilterExecutor {
 
     @Override
     public Optional<ResponseEntity> wrapWithFilters(Function<UpdateWrapper, Optional<ResponseEntity>> function,
-                               UpdateWrapper wrapper, TelegramClient telegramClient) {
-        FilterChain filterChain = new FilterChain(function, filters, wrapper, telegramClient);
-        filterChain.doFilter();
-        return filterChain.getResult();
+                                                    UpdateWrapper wrapper, TelegramClient telegramClient) {
+        try {
+            FilterChain filterChain = new FilterChain(function, filters, wrapper, telegramClient);
+            filterChain.doFilter();
+            return filterChain.getResult();
+        } catch (FilterException fe) {
+            throw fe;
+        }
     }
 
     @Autowired
