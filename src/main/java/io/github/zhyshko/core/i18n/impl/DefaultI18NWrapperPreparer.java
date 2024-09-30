@@ -18,17 +18,17 @@ public class DefaultI18NWrapperPreparer implements I18NWrapperPreparer {
 
     @Override
     public I18NLabelsWrapper prepareWrapper(UpdateWrapper wrapper) {
-        String langCode = Optional.ofNullable(wrapper.getSession())
+        Locale locale = Optional.ofNullable(wrapper.getSession())
                 .map(s -> s.get(SessionConstants.SESSION_LOCALE_KEY))
-                .filter(String.class::isInstance)
-                .map(String.class::cast)
+                .filter(Locale.class::isInstance)
+                .map(Locale.class::cast)
                 .orElse(Optional.ofNullable(wrapper.getUpdate())
                         .filter(Update::hasMessage)
                         .map(Update::getMessage)
                         .map(m -> m.getFrom().getLanguageCode())
-                        .orElse("en"));
-        return new I18NLabelsWrapper(Locale.forLanguageTag(langCode),
-                messageSource);
+                        .map(Locale::forLanguageTag)
+                        .orElse(Locale.ENGLISH));
+        return new I18NLabelsWrapper(locale, messageSource);
     }
 
     @Autowired

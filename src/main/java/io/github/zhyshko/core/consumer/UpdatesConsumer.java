@@ -55,14 +55,15 @@ public class UpdatesConsumer implements LongPollingUpdateConsumer {
         var updateWrapper = this.updateFacade.prepareUpdateWrapper(update);
         try {
             UpdateRouter router = updateHandlers.get(updateWrapper.getUpdateType());
-            final I18NLabelsWrapper labelsWrapper = config.isI18nEnabled() ?
-                    this.i18NWrapperPreparer.prepareWrapper(updateWrapper)
-                    : null;
+
             this.filterExecutor
                     .wrapWithFilters(wrapper -> sessionExecutor
-                                    .wrapUnderSession((w) -> router.handle(w, labelsWrapper), updateWrapper),
+                                    .wrapUnderSession(router::handle, updateWrapper),
                             updateWrapper, telegramClient)
                     .ifPresent(response -> {
+                        final I18NLabelsWrapper labelsWrapper = config.isI18nEnabled() ?
+                                this.i18NWrapperPreparer.prepareWrapper(updateWrapper)
+                                : null;
                         applyViewInitializer(updateWrapper, labelsWrapper, response);
                         this.responseExecutor.execute(telegramClient, response);
                         if (response.getNextRoute() != null) {
@@ -98,7 +99,7 @@ public class UpdatesConsumer implements LongPollingUpdateConsumer {
                         if (paramTypes.length == 1 && paramTypes[0] == UpdateWrapper.class) {
                             responseObj = method.invoke(nextRoute, wrapper);
                         } else if (paramTypes.length == 2 && paramTypes[0] == UpdateWrapper.class
-                                && paramTypes[1] == I18NLabelsWrapper.class) {
+                                && paramTypes[1] == I18NLabelsWrapper.class && i18NLabelsWrapper != null) {
                             responseObj = method.invoke(nextRoute, wrapper, i18NLabelsWrapper);
                         } else {
                             LOG.warn("Method {} doesn't have applicable signature", method.getName());
