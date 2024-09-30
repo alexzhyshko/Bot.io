@@ -9,7 +9,7 @@ import java.util.Map;
 @Component
 public class InMemoryStateRepository implements StateRepository {
 
-    private Map<Long, Integer> states = new HashMap<>();
+    private final Map<Long, Integer> states = new HashMap<>();
 
     @Override
     public void updateStateByUserId(Integer state, Long userId) {

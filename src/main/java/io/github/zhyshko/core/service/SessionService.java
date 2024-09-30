@@ -1,16 +1,13 @@
 package io.github.zhyshko.core.service;
 
-import io.github.zhyshko.core.util.UpdateWrapper;
-
 public interface SessionService {
 
-    Object get(UpdateWrapper wrapper, String key);
+    Object get(Long userId, String key);
 
+    void set(Long userId, String key, Object value);
 
-    void set(UpdateWrapper wrapper, String key, Object value);
+    void delete(Long userId, String key);
 
-    void delete(UpdateWrapper wrapper, String key);
-
-    void invalidate(UpdateWrapper wrapper);
+    void invalidate(Long userId);
 
 }

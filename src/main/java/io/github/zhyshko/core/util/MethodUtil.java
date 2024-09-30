@@ -4,7 +4,9 @@ import io.github.zhyshko.core.annotation.*;
 import io.github.zhyshko.core.router.Route;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,5 +49,18 @@ public class MethodUtil {
         }
 
         return methodToHandle;
+    }
+
+    public static Optional<Method> getViewInitializerMethod(Route route) {
+        List<Method> methods = Stream.of(route.getClass().getMethods())
+                .filter(m -> m.isAnnotationPresent(ViewInitializer.class))
+                .toList();
+        if(methods.size() > 1) {
+            throw new IllegalArgumentException("More than one view initializer defined for "+route.getClass().getSimpleName());
+        }
+        if(methods.size() == 1) {
+            return Optional.of(methods.get(0));
+        }
+        return Optional.empty();
     }
 }

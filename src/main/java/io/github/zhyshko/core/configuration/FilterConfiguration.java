@@ -16,7 +16,7 @@ public class FilterConfiguration {
     private final ApplicationContext applicationContext;
 
     @Autowired
-    public FilterConfiguration(Config config, ApplicationContext applicationContext) {
+    public FilterConfiguration(ConfigProperties config, ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
         if(config.getFilters() != null) {
             this.filters = config.getFilters();

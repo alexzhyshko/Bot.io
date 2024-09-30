@@ -8,8 +8,6 @@ import io.github.zhyshko.core.strategy.MessageIdRetrieveStrategy;
 import io.github.zhyshko.core.strategy.UserIdRetrieveStrategy;
 import io.github.zhyshko.core.util.UpdateType;
 import io.github.zhyshko.core.util.UpdateWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -18,8 +16,6 @@ import java.util.List;
 
 @Component
 public class DefaultUpdateFacade implements UpdateFacade {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultUpdateFacade.class);
 
     private StateService stateService;
     private List<UserIdRetrieveStrategy> userIdRetrieveStrategies;
@@ -70,7 +66,7 @@ public class DefaultUpdateFacade implements UpdateFacade {
         return updateTypeProviders.stream()
                 .filter(s -> s.isApplicable(update))
                 .findFirst()
-                .map(s -> s.get(update))
+                .map(UpdateTypeProvider::get)
                 .orElseThrow(() -> new IllegalArgumentException("Could not get updateType for update: "+update));
     }
 

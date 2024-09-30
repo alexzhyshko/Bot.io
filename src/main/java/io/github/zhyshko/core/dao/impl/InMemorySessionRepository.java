@@ -9,7 +9,7 @@ import java.util.Map;
 @Component
 public class InMemorySessionRepository implements SessionRepository {
 
-    private Map<Long, Map<String, Object>> sessionAttributes = new HashMap<>();
+    private final Map<Long, Map<String, Object>> sessionAttributes = new HashMap<>();
 
     @Override
     public void set(Long userId, String key, Object value) {

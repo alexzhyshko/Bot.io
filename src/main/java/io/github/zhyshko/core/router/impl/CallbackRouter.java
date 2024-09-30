@@ -1,5 +1,6 @@
 package io.github.zhyshko.core.router.impl;
 
+import io.github.zhyshko.core.i18n.impl.I18NLabelsWrapper;
 import io.github.zhyshko.core.response.ResponseEntity;
 import io.github.zhyshko.core.router.Route;
 import io.github.zhyshko.core.router.UpdateRouter;
@@ -23,7 +24,7 @@ public class CallbackRouter implements UpdateRouter {
     private List<Route> callbackRoutes;
 
     @Override
-    public Optional<ResponseEntity> handle(UpdateWrapper wrapper) {
+    public Optional<ResponseEntity> handle(UpdateWrapper wrapper, I18NLabelsWrapper i18NLabelsWrapper) {
         var state = wrapper.getState();
         Route routeToHandle;
         if (state == null) {
@@ -43,10 +44,22 @@ public class CallbackRouter implements UpdateRouter {
                 wrapper.getUserId(), routeToHandle.getClass().getSimpleName(), methodToHandle.getName());
 
         try {
-            Object responseObj = methodToHandle.invoke(routeToHandle, wrapper);
+            Object responseObj = null;
+            Class<?>[] types = methodToHandle.getParameterTypes();
+
+            if(types.length == 1 && types[0] == UpdateWrapper.class) {
+                responseObj = methodToHandle.invoke(routeToHandle, wrapper);
+            } else if(types.length == 2 && types[0] == UpdateWrapper.class && types[1] == I18NLabelsWrapper.class) {
+                responseObj = methodToHandle.invoke(routeToHandle, wrapper, i18NLabelsWrapper);
+            } else {
+                LOG.warn("Target route method does not correspond to any allowed signature, skipping");
+            }
+
             if (responseObj instanceof ResponseEntity responseEntity) {
                 return Optional.of(responseEntity);
             }
+            LOG.warn("Method {}:{} returned unexpected return type {}",
+                    routeToHandle.getClass().getSimpleName(), methodToHandle.getName(), responseObj);
             return Optional.empty();
         } catch (Exception e) {
             LOG.error("Error occurred while invoking the route {}:{} for message {}",

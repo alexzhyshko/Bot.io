@@ -7,6 +7,6 @@ public interface UpdateTypeProvider {
 
     boolean isApplicable(Update update);
 
-    UpdateType get(Update update);
+    UpdateType get();
 
 }

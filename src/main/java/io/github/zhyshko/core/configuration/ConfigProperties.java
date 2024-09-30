@@ -13,10 +13,10 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Config {
-
+public class ConfigProperties {
 
     private String botToken;
     private List<String> filters;
+    private boolean i18nEnabled;
 
 }

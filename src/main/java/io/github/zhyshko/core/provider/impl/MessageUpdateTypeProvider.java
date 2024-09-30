@@ -14,7 +14,7 @@ public class MessageUpdateTypeProvider implements UpdateTypeProvider {
     }
 
     @Override
-    public UpdateType get(Update update) {
+    public UpdateType get() {
         return UpdateType.MESSAGE;
     }
 }

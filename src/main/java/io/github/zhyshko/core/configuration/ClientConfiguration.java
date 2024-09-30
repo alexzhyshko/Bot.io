@@ -23,7 +23,7 @@ public class ClientConfiguration {
     private String botToken;
 
     @Autowired
-    public ClientConfiguration(Config config, Optional<BotTokenProvider> botTokenProvider) {
+    public ClientConfiguration(ConfigProperties config, Optional<BotTokenProvider> botTokenProvider) {
         botTokenProvider.ifPresentOrElse(
                 provider -> {
                     this.botToken = provider.provide();
