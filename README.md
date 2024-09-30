@@ -100,7 +100,7 @@ Out-of-the-box there is an available functinality for using filters.
 To create a filter it is needed:
 * Create a filter class and put `@Component` over it;
 * Implement FilterAdapter interface and its method;
-* Add config property `botio.filters` to specify in which order filters have to be executed;
+* Add config property `botio.filters` with filter bean names to specify in which order filters have to be executed;
 * Use filterChain.doFilter() to trigger further flow, you can add any logic before anf after - it will be executed in the order of stack;
 * Use UpdateWrapper to get, check or modify any request-related information;
 * Use TelegramClient to execute any actions from within the filter;
