@@ -23,8 +23,8 @@ public class FilterConfiguration {
         }
     }
 
-    @Bean
-    public List<FilterAdapter> prepareFilters() {
+    @Bean("filters")
+    public List<FilterAdapter> getFilters() {
         if(this.filters == null) {
             return List.of();
         }

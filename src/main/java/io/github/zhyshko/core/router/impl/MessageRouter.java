@@ -51,12 +51,15 @@ public class MessageRouter implements UpdateRouter {
             Object responseObj = null;
             Class<?>[] types = methodToHandle.getParameterTypes();
 
-            if(types.length == 1 && types[0] == UpdateWrapper.class) {
+            if(types.length == 0) {
+                responseObj = methodToHandle.invoke(routeToHandle);
+            } else if(types.length == 1 && types[0] == UpdateWrapper.class) {
                 responseObj = methodToHandle.invoke(routeToHandle, wrapper);
             } else if(types.length == 2 && types[0] == UpdateWrapper.class && types[1] == I18NLabelsWrapper.class) {
                 responseObj = methodToHandle.invoke(routeToHandle, wrapper, i18NLabelsWrapper);
             } else {
-                LOG.warn("Target route method does not correspond to any allowed signature, skipping");
+                LOG.warn("Target {}:{} does not correspond to any allowed signature, skipping",
+                        routeToHandle.getClass().getSimpleName(), methodToHandle.getName());
             }
             if (responseObj instanceof ResponseEntity responseEntity) {
                 return Optional.of(responseEntity);

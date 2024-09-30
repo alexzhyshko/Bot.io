@@ -7,6 +7,7 @@ import io.github.zhyshko.core.i18n.I18NWrapperPreparer;
 import io.github.zhyshko.core.i18n.impl.I18NLabelsWrapper;
 import io.github.zhyshko.core.response.ResponseEntity;
 import io.github.zhyshko.core.response.ResponseExecutor;
+import io.github.zhyshko.core.response.ResponseList;
 import io.github.zhyshko.core.router.Route;
 import io.github.zhyshko.core.router.UpdateRouter;
 import io.github.zhyshko.core.service.StateService;
@@ -20,11 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +63,7 @@ public class UpdatesConsumer implements LongPollingUpdateConsumer {
                                     .wrapUnderSession((w) -> router.handle(w, labelsWrapper), updateWrapper),
                             updateWrapper, telegramClient)
                     .ifPresent(response -> {
-                        response = addViewInitializer(updateWrapper, labelsWrapper, response);
+                        applyViewInitializer(updateWrapper, labelsWrapper, response);
                         this.responseExecutor.execute(telegramClient, response);
                         if (response.getNextRoute() != null) {
                             LOG.info("For {} next route is {} ({})", updateWrapper.getUserId(),
@@ -76,42 +77,51 @@ public class UpdatesConsumer implements LongPollingUpdateConsumer {
 
     }
 
-    private ResponseEntity addViewInitializer(UpdateWrapper wrapper, I18NLabelsWrapper i18NLabelsWrapper,
-                                              ResponseEntity responseEntity) {
+    private void applyViewInitializer(UpdateWrapper wrapper, I18NLabelsWrapper i18NLabelsWrapper,
+                                      ResponseEntity responseEntity) {
         if (responseEntity.getNextRoute() == null) {
-            return responseEntity;
+            return;
         }
         Route nextRoute = applicationContext.getBean(responseEntity.getNextRoute());
-        SendMessage.SendMessageBuilder sendMessageBuilder = SendMessage.builder();
-        sendMessageBuilder.chatId(wrapper.getChatId());
 
-        invokeViewInitializer(nextRoute, sendMessageBuilder, i18NLabelsWrapper);
-
-        try {
-            SendMessage sendMessage = sendMessageBuilder.build();
-            return ResponseEntity.builder()
-                    .responses(responseEntity.getResponses())
-                    .response(sendMessage)
-                    .nextRoute(responseEntity.getNextRoute())
-                    .build();
-        } catch (NullPointerException npe) {
-            LOG.warn("View initializer method has not populated one of mandatory attributes, skipping", npe);
-            return responseEntity;
-        }
+        invokeViewInitializer(nextRoute, wrapper, responseEntity, i18NLabelsWrapper);
     }
 
-    private void invokeViewInitializer(Route nextRoute, SendMessage.SendMessageBuilder sendMessageBuilder,
+    private void invokeViewInitializer(Route nextRoute, UpdateWrapper wrapper,
+                                       ResponseEntity responseEntity,
                                        I18NLabelsWrapper i18NLabelsWrapper) {
         MethodUtil.getViewInitializerMethod(nextRoute)
                 .ifPresent(method -> {
                     try {
                         Class<?>[] paramTypes = method.getParameterTypes();
-                        if (paramTypes.length == 1 && paramTypes[0] == SendMessage.SendMessageBuilder.class) {
-                            method.invoke(nextRoute, sendMessageBuilder);
-                        }
-                        if (paramTypes.length == 2 && paramTypes[0] == SendMessage.SendMessageBuilder.class
+                        Object responseObj = null;
+                        if (paramTypes.length == 1 && paramTypes[0] == UpdateWrapper.class) {
+                            responseObj = method.invoke(nextRoute, wrapper);
+                        } else if (paramTypes.length == 2 && paramTypes[0] == UpdateWrapper.class
                                 && paramTypes[1] == I18NLabelsWrapper.class) {
-                            method.invoke(nextRoute, sendMessageBuilder, i18NLabelsWrapper);
+                            responseObj = method.invoke(nextRoute, wrapper, i18NLabelsWrapper);
+                        } else {
+                            LOG.warn("Method {} doesn't have applicable signature", method.getName());
+                        }
+
+                        if (responseObj instanceof ResponseList responseList) {
+                            var responsesList = responseEntity.getResponses();
+                            var additionalResponsesList = responseList.getResponses();
+                            if (!additionalResponsesList.isEmpty()) {
+                                List aggregatedList = new ArrayList<>();
+                                aggregatedList.addAll(responsesList);
+                                aggregatedList.addAll(additionalResponsesList);
+                                responseEntity.setResponses(aggregatedList);
+                            } else {
+                                LOG.warn("View initializer {}:{} returned an empty response list",
+                                        nextRoute.getClass().getSimpleName(), method.getName());
+                            }
+                        } else if (responseObj == null) {
+                            LOG.warn("View initializer {}:{} returned a null response",
+                                    nextRoute.getClass().getSimpleName(), method.getName());
+                        } else {
+                            LOG.warn("View initializer {}:{} returned an incorrect return type {}",
+                                    nextRoute.getClass().getSimpleName(), method.getName(), responseObj);
                         }
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         LOG.error("Error executing view initializer for {}", nextRoute.getClass().getSimpleName());

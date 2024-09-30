@@ -6,6 +6,7 @@ import io.github.zhyshko.core.filter.FilterExecutor;
 import io.github.zhyshko.core.response.ResponseEntity;
 import io.github.zhyshko.core.util.UpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
@@ -31,6 +32,7 @@ public class DefaultFilterExecutor implements FilterExecutor {
     }
 
     @Autowired
+    @Qualifier("filters")
     public void setFilters(List<FilterAdapter> filters) {
         this.filters = filters;
     }
