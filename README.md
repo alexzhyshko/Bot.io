@@ -52,9 +52,11 @@ This is a message builder ready to be customized with your own text, buttons, ac
 
 ```
 @ViewInitializer
-public void initView(SendMessage.SendMessageBuilder builder) {
-   builder
-    .text("Main Menu")
+public ResponseList initView(UpdateWrapper wrapper) {
+    var responseMessage = ..prepare some send message or other response..
+    return ResponseList.builder()
+        .response(responseMessage)
+        .build();
 }
 ```
 
@@ -76,6 +78,10 @@ public ResponseEntity helloWorld(UpdateWrapper wrapper, I18NLabelsWrapper i18NLa
             .build();
 }
 ```
+
+You can also specify the mapping for ```*Mapping``` annotations to specify which updates should be matched and handled to them.
+By default, if no value specified, it uses * matcher effectively matching any update of this type.
+
 (similarly Callback handlers can be created)
 
 ### Transitions to other routes

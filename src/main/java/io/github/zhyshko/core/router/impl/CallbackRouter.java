@@ -40,7 +40,7 @@ public class CallbackRouter implements UpdateRouter {
 
         Method methodToHandle = MethodUtil.getMethodForCallback(routeToHandle, callbackData);
 
-        LOG.info("Routing {} to {}:{}",
+        LOG.debug("Routing {} to {}:{}",
                 wrapper.getUserId(), routeToHandle.getClass().getSimpleName(), methodToHandle.getName());
 
         try {

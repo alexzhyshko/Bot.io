@@ -28,13 +28,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class UpdatesConsumer implements LongPollingUpdateConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(UpdatesConsumer.class);
 
-    private Map<UpdateType, UpdateRouter> updateHandlers;
+    private Map<UpdateType, UpdateRouter> updateRouters;
     private UpdateFacade updateFacade;
     private TelegramClient telegramClient;
     private ResponseExecutor responseExecutor;
@@ -47,14 +48,17 @@ public class UpdatesConsumer implements LongPollingUpdateConsumer {
 
     @Override
     public void consume(List<Update> updates) {
-        LOG.info("Received updates {}", updates);
+        LOG.debug("Received updates {}", updates);
         updates.forEach(this::consumeSingle);
     }
 
     private void consumeSingle(Update update) {
-        var updateWrapper = this.updateFacade.prepareUpdateWrapper(update);
         try {
-            UpdateRouter router = updateHandlers.get(updateWrapper.getUpdateType());
+            var updateWrapper = this.updateFacade.prepareUpdateWrapper(update);
+
+            UpdateRouter router = Optional
+                    .ofNullable(updateRouters.get(updateWrapper.getUpdateType()))
+                    .orElseThrow(() -> new IllegalArgumentException("Update type is unsupported"));
 
             this.filterExecutor
                     .wrapWithFilters(wrapper -> sessionExecutor
@@ -67,13 +71,13 @@ public class UpdatesConsumer implements LongPollingUpdateConsumer {
                         applyViewInitializer(updateWrapper, labelsWrapper, response);
                         this.responseExecutor.execute(telegramClient, response);
                         if (response.getNextRoute() != null) {
-                            LOG.info("For {} next route is {} ({})", updateWrapper.getUserId(),
+                            LOG.debug("For {} next route is {} ({})", updateWrapper.getUserId(),
                                     response.getNextRoute().getSimpleName(), response.getNextRoute().hashCode());
                             this.stateService.setState(response.getNextRoute().hashCode(), updateWrapper.getUserId());
                         }
                     });
         } catch (Exception e) {
-            LOG.error("Error occurred while handling update {}", updateWrapper.getUpdate(), e);
+            LOG.error("Error occurred while handling update {}", update, e);
         }
 
     }
@@ -133,8 +137,8 @@ public class UpdatesConsumer implements LongPollingUpdateConsumer {
 
 
     @Autowired
-    public void setUpdateHandlers(Map<UpdateType, UpdateRouter> updateHandlers) {
-        this.updateHandlers = updateHandlers;
+    public void setUpdateRouters(Map<UpdateType, UpdateRouter> updateRouters) {
+        this.updateRouters = updateRouters;
     }
 
     @Autowired

@@ -17,7 +17,6 @@ import java.util.Optional;
 @Component
 public class ClientConfiguration {
 
-
     private static final Logger LOG = LoggerFactory.getLogger(ClientConfiguration.class);
 
     private String botToken;

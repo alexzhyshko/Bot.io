@@ -44,7 +44,7 @@ public class MessageRouter implements UpdateRouter {
 
         Method methodToHandle = MethodUtil.getMethodForMessage(routeToHandle, message);
 
-        LOG.info("Routing {} to {}:{}",
+        LOG.debug("Routing {} to {}:{}",
                 wrapper.getUserId(), routeToHandle.getClass().getSimpleName(), methodToHandle.getName());
 
         try {

@@ -26,10 +26,10 @@ public class DefaultUpdateFacade implements UpdateFacade {
 
     public UpdateWrapper prepareUpdateWrapper(Update update) {
         UpdateWrapper sessionWrapper = UpdateWrapper.builder()
+                .updateType(getUpdateType(update))
                 .userId(getUserId(update))
                 .messageId(getMessageId(update))
                 .chatId(getChatId(update))
-                .updateType(getUpdateType(update))
                 .update(update)
                 .build();
 
@@ -67,7 +67,7 @@ public class DefaultUpdateFacade implements UpdateFacade {
                 .filter(s -> s.isApplicable(update))
                 .findFirst()
                 .map(UpdateTypeProvider::get)
-                .orElseThrow(() -> new IllegalArgumentException("Could not get updateType for update: "+update));
+                .orElseThrow(() -> new IllegalArgumentException("Update type is unsupported: "+update));
     }
 
     @Autowired
