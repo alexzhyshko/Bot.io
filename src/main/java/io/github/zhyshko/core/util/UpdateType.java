@@ -3,6 +3,11 @@ package io.github.zhyshko.core.util;
 public enum UpdateType {
 
     MESSAGE,
-    CALLBACK
+    CALLBACK,
+    EDIT_MESSAGE,
+    DOCUMENT,
+    PHOTO,
+    VIDEO
+
 
 }

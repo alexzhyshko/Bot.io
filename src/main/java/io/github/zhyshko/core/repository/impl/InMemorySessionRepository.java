@@ -1,6 +1,6 @@
-package io.github.zhyshko.core.dao.impl;
+package io.github.zhyshko.core.repository.impl;
 
-import io.github.zhyshko.core.dao.SessionRepository;
+import io.github.zhyshko.core.repository.SessionRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

@@ -19,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -45,24 +47,44 @@ public class UpdatesConsumer implements LongPollingUpdateConsumer {
     private SessionExecutor sessionExecutor;
     private I18NWrapperPreparer i18NWrapperPreparer;
     private ConfigProperties config;
+    private TaskExecutor threadPoolTaskExecutor;
 
     @Override
     public void consume(List<Update> updates) {
         LOG.debug("Received updates {}", updates);
-        updates.forEach(this::consumeSingle);
+        if(threadPoolTaskExecutor != null) {
+            updates.forEach(u -> threadPoolTaskExecutor.execute(() -> this.consumeSingle(u)));
+        } else {
+            updates.forEach(this::consumeSingleInternal);
+        }
+
     }
 
     private void consumeSingle(Update update) {
+        if(config.isPerUserRequestLockingEnabled()) {
+            consumeSingleInternalSynchronized(update);
+        } else {
+            consumeSingleInternal(update);
+        }
+    }
+
+    private void consumeSingleInternalSynchronized(Update update) {
+        Long chatId = this.updateFacade.getChatId(update);
+        synchronized (chatId.toString().intern()) {
+            consumeSingleInternal(update);
+        }
+    }
+
+    private void consumeSingleInternal(Update update) {
         try {
             var updateWrapper = this.updateFacade.prepareUpdateWrapper(update);
-
             UpdateRouter router = Optional
                     .ofNullable(updateRouters.get(updateWrapper.getUpdateType()))
                     .orElseThrow(() -> new IllegalArgumentException("Update type is unsupported"));
 
             this.filterExecutor
                     .wrapWithFilters(wrapper -> sessionExecutor
-                                    .wrapUnderSession(router::handle, updateWrapper),
+                                    .wrapUnderSession((w, i) -> this.handleUpdateInternal(router, w, i), updateWrapper),
                             updateWrapper, telegramClient)
                     .ifPresent(response -> {
                         final I18NLabelsWrapper labelsWrapper = config.isI18nEnabled() ?
@@ -79,7 +101,16 @@ public class UpdatesConsumer implements LongPollingUpdateConsumer {
         } catch (Exception e) {
             LOG.error("Error occurred while handling update {}", update, e);
         }
+    }
 
+    private Optional<ResponseEntity> handleUpdateInternal(UpdateRouter updateRouter,
+                                                          UpdateWrapper wrapper, I18NLabelsWrapper i18nWrapper) {
+        try {
+            return updateRouter.handle(wrapper, i18nWrapper);
+        } catch (Exception e) {
+            LOG.error("Unhandled error executing update router", e);
+            return Optional.empty();
+        }
     }
 
     private void applyViewInitializer(UpdateWrapper wrapper, I18NLabelsWrapper i18NLabelsWrapper,
@@ -103,7 +134,12 @@ public class UpdatesConsumer implements LongPollingUpdateConsumer {
                         if (paramTypes.length == 1 && paramTypes[0] == UpdateWrapper.class) {
                             responseObj = method.invoke(nextRoute, wrapper);
                         } else if (paramTypes.length == 2 && paramTypes[0] == UpdateWrapper.class
-                                && paramTypes[1] == I18NLabelsWrapper.class && i18NLabelsWrapper != null) {
+                                && paramTypes[1] == I18NLabelsWrapper.class) {
+                            if(!config.isI18nEnabled()) {
+                                throw new IllegalArgumentException(
+                                        String.format("I18N is not enabled, but %s:%s requires i18nLabelsWrapper",
+                                                nextRoute.getClass().getSimpleName(), method.getName()));
+                            }
                             responseObj = method.invoke(nextRoute, wrapper, i18NLabelsWrapper);
                         } else {
                             LOG.warn("Method {} doesn't have applicable signature", method.getName());
@@ -134,7 +170,6 @@ public class UpdatesConsumer implements LongPollingUpdateConsumer {
                     }
                 });
     }
-
 
     @Autowired
     public void setUpdateRouters(Map<UpdateType, UpdateRouter> updateRouters) {
@@ -184,5 +219,17 @@ public class UpdatesConsumer implements LongPollingUpdateConsumer {
     @Autowired
     public void setConfig(ConfigProperties config) {
         this.config = config;
+    }
+
+    @Autowired
+    public void setThreadPoolTaskExecutor(ThreadPoolTaskExecutor threadPoolTaskExecutor) {
+        if(config != null && !config.isMultiThreadedUpdateConsumerEnabled()) {
+            LOG.info("Mutlithreaded update consumer is disabled, proceeding in single-thread mode");
+            this.threadPoolTaskExecutor = null;
+            threadPoolTaskExecutor.shutdown();
+        } else {
+            LOG.info("Mutlithreaded update consumer is enabled");
+            this.threadPoolTaskExecutor = threadPoolTaskExecutor;
+        }
     }
 }

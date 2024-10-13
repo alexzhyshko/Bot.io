@@ -32,6 +32,7 @@ public class DefaultSessionExecutor implements SessionExecutor {
                 this.i18NWrapperPreparer.prepareWrapper(wrapper)
                 : null;
 
+
         return routerFunction.apply(wrapper, labelsWrapper);
     }
 

@@ -1,8 +1,6 @@
 package io.github.zhyshko.core.configuration;
 
-import io.github.zhyshko.core.annotation.Callback;
 import io.github.zhyshko.core.annotation.Entrypoint;
-import io.github.zhyshko.core.annotation.Message;
 import io.github.zhyshko.core.router.Route;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,39 +20,15 @@ public class RoutesConfiguration {
     private ApplicationContext applicationContext;
 
     @Bean
-    public List<Route> messageRoutes() {
-        List<Route> messageRoutes = applicationContext.getBeansWithAnnotation(Message.class)
-                .values()
-                .stream()
-                .map(o -> (Route) o)
-                .toList();
-
-        if (!messageRoutes.isEmpty()) {
-            LOG.info("Found and initialized {} message route classes", messageRoutes.size());
+    public List<Route> routes(List<Route> routes) {
+        routes = routes.stream().distinct().toList();
+        if (!routes.isEmpty()) {
+            LOG.info("Found and initialized {} route classes", routes.size());
             if (LOG.isDebugEnabled()) {
-                LOG.info("Message route classes found: {}", messageRoutes);
+                LOG.info("Route classes found: {}", routes);
             }
         }
-
-        return messageRoutes;
-    }
-
-    @Bean
-    public List<Route> callbackRoutes() {
-        List<Route> callbackRoutes = applicationContext.getBeansWithAnnotation(Callback.class)
-                .values()
-                .stream()
-                .map(o -> (Route) o)
-                .toList();
-
-        if (!callbackRoutes.isEmpty()) {
-            LOG.info("Found and initialized {} callback route classes", callbackRoutes.size());
-            if (LOG.isDebugEnabled()) {
-                LOG.info("Callback route classes found: {}", callbackRoutes);
-            }
-        }
-
-        return callbackRoutes;
+        return routes;
     }
 
     @Bean("entryPoint")

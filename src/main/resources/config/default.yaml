@@ -1,0 +1,12 @@
+spring:
+  task:
+    execution:
+      pool:
+        core-size: 3
+        max-size: 3
+        queue-capacity: 0
+        keep-alive: "60s"
+      thread-name-prefix: UpdateTask-
+botio:
+  multiThreadedUpdateConsumerEnabled: true
+  perUserRequestLockingEnabled: true

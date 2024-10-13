@@ -1,6 +1,6 @@
 package io.github.zhyshko.core.service.impl;
 
-import io.github.zhyshko.core.dao.SessionRepository;
+import io.github.zhyshko.core.repository.SessionRepository;
 import io.github.zhyshko.core.service.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

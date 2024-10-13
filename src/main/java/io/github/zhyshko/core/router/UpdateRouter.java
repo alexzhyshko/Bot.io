@@ -9,7 +9,14 @@ import java.util.Optional;
 
 public interface UpdateRouter {
 
-    Optional<ResponseEntity> handle(UpdateWrapper wrapper, I18NLabelsWrapper i18NLabelsWrapper);
+    Optional<ResponseEntity> handle(UpdateWrapper wrapper, I18NLabelsWrapper i18NLabelsWrapper) throws Exception;
+
+    void beforeHandle(UpdateWrapper wrapper, I18NLabelsWrapper i18NLabelsWrapper);
+
+    Route getRouteToHandle(UpdateWrapper wrapper);
+
+    void afterHandle(Optional<ResponseEntity> responseEntityOptional,
+                     UpdateWrapper wrapper, I18NLabelsWrapper i18NLabelsWrapper);
 
     UpdateType getType();
 

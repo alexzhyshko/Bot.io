@@ -1,4 +1,4 @@
-package io.github.zhyshko.core.dao;
+package io.github.zhyshko.core.repository;
 
 public interface StateRepository {
 

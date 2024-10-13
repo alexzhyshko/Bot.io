@@ -18,4 +18,6 @@ public class ResponseEntity {
 
     private Class<? extends Route> nextRoute;
 
+    private Exception exception;
+
 }

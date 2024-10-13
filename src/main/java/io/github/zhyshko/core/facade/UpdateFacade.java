@@ -7,4 +7,6 @@ public interface UpdateFacade {
 
     UpdateWrapper prepareUpdateWrapper(Update update);
 
+    Long getChatId(Update update);
+
 }

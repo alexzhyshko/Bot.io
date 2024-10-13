@@ -16,5 +16,7 @@ public class ConfigProperties {
     private String botToken;
     private List<String> filters;
     private boolean i18nEnabled;
+    private boolean multiThreadedUpdateConsumerEnabled;
+    private boolean perUserRequestLockingEnabled;
 
 }

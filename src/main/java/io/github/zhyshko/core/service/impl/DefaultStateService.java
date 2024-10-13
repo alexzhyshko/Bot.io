@@ -1,6 +1,6 @@
 package io.github.zhyshko.core.service.impl;
 
-import io.github.zhyshko.core.dao.StateRepository;
+import io.github.zhyshko.core.repository.StateRepository;
 import io.github.zhyshko.core.service.StateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

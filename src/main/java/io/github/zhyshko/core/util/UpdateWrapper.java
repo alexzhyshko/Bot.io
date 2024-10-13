@@ -14,6 +14,8 @@ public class UpdateWrapper {
     private Integer messageId;
     private Integer state;
     private Update update;
+    private Object payload;
     private UpdateType updateType;
     private Session session;
+    private Exception exception;
 }

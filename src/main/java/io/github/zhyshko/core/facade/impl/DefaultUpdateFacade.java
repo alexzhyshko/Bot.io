@@ -5,13 +5,16 @@ import io.github.zhyshko.core.provider.UpdateTypeProvider;
 import io.github.zhyshko.core.service.StateService;
 import io.github.zhyshko.core.strategy.ChatIdRetrieveStrategy;
 import io.github.zhyshko.core.strategy.MessageIdRetrieveStrategy;
+import io.github.zhyshko.core.strategy.PayloadRetrieveStrategy;
 import io.github.zhyshko.core.strategy.UserIdRetrieveStrategy;
 import io.github.zhyshko.core.util.UpdateType;
 import io.github.zhyshko.core.util.UpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.core.Ordered;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -22,24 +25,35 @@ public class DefaultUpdateFacade implements UpdateFacade {
     private List<MessageIdRetrieveStrategy> messageIdRetrieveStrategies;
     private List<ChatIdRetrieveStrategy> chatIdRetrieveStrategies;
     private List<UpdateTypeProvider> updateTypeProviders;
+    private List<PayloadRetrieveStrategy> payloadRetrieveStrategies;
 
 
+    @Override
     public UpdateWrapper prepareUpdateWrapper(Update update) {
-        UpdateWrapper sessionWrapper = UpdateWrapper.builder()
+        return UpdateWrapper.builder()
                 .updateType(getUpdateType(update))
                 .userId(getUserId(update))
                 .messageId(getMessageId(update))
                 .chatId(getChatId(update))
                 .update(update)
+                .payload(getPayload(update))
+                .state(this.stateService.getState(getUserId(update)))
                 .build();
+    }
 
-        sessionWrapper.setState(this.stateService.getState(sessionWrapper.getUserId()));
-
-        return sessionWrapper;
+    @Override
+    public Long getChatId(Update update) {
+        return chatIdRetrieveStrategies.stream()
+                .sorted(Comparator.comparingInt(Ordered::getOrder))
+                .filter(s -> s.isApplicable(update))
+                .findFirst()
+                .map(s -> s.retrieve(update))
+                .orElseThrow(() -> new IllegalArgumentException("Could not get chatId for update: "+update));
     }
 
     private Long getUserId(Update update) {
         return userIdRetrieveStrategies.stream()
+                .sorted(Comparator.comparingInt(Ordered::getOrder))
                 .filter(s -> s.isApplicable(update))
                 .findFirst()
                 .map(s -> s.retrieve(update))
@@ -48,25 +62,28 @@ public class DefaultUpdateFacade implements UpdateFacade {
 
     private Integer getMessageId(Update update) {
         return messageIdRetrieveStrategies.stream()
+                .sorted(Comparator.comparingInt(Ordered::getOrder))
                 .filter(s -> s.isApplicable(update))
                 .findFirst()
                 .map(s -> s.retrieve(update))
                 .orElseThrow(() -> new IllegalArgumentException("Could not get messageId for update: "+update));
     }
 
-    private Long getChatId(Update update) {
-        return chatIdRetrieveStrategies.stream()
-                .filter(s -> s.isApplicable(update))
-                .findFirst()
-                .map(s -> s.retrieve(update))
-                .orElseThrow(() -> new IllegalArgumentException("Could not get chatId for update: "+update));
-    }
-
     private UpdateType getUpdateType(Update update) {
         return updateTypeProviders.stream()
+                .sorted(Comparator.comparingInt(Ordered::getOrder))
                 .filter(s -> s.isApplicable(update))
                 .findFirst()
                 .map(UpdateTypeProvider::get)
+                .orElseThrow(() -> new IllegalArgumentException("Update type is unsupported: "+update));
+    }
+
+    private Object getPayload(Update update) {
+        return payloadRetrieveStrategies.stream()
+                .sorted(Comparator.comparingInt(Ordered::getOrder))
+                .filter(s -> s.isApplicable(update))
+                .findFirst()
+                .map(s -> s.retrieve(update))
                 .orElseThrow(() -> new IllegalArgumentException("Update type is unsupported: "+update));
     }
 
@@ -93,5 +110,10 @@ public class DefaultUpdateFacade implements UpdateFacade {
     @Autowired
     public void setUpdateTypeProviders(List<UpdateTypeProvider> updateTypeProviders) {
         this.updateTypeProviders = updateTypeProviders;
+    }
+
+    @Autowired
+    public void setPayloadRetrieveStrategies(List<PayloadRetrieveStrategy> payloadRetrieveStrategies) {
+        this.payloadRetrieveStrategies = payloadRetrieveStrategies;
     }
 }
