@@ -3,7 +3,7 @@
 [![Generic badge](https://img.shields.io/badge/Build-Passing-Green.svg)](https://central.sonatype.com/artifact/io.github.alexzhyshko/BotIO/2.0.1)
 
 ## Maven Central
-https://central.sonatype.com/artifact/io.github.alexzhyshko/BotIO/2.0.1
+https://central.sonatype.com/artifact/io.github.alexzhyshko/BotIO
 
 ## Dependencies
 
@@ -32,7 +32,7 @@ Each route has its own "view" - a message, set of buttons etc; and set of method
 As a first step, it is required to set up an Entrypoint route - the route which is equivalent to index.html in web apps - it is the landing route for our bot application.
 To do so, we need to:
 * create a class with a `@Component`;
-* add `@Entrypoint` and `@Message` - to declare an entrypoint and that current route will be used to handle message type of updates;
+* add `@Entrypoint` - to declare an entrypoint - think of it as an index.html for a web app;
 * implement `Route` interface (empty by design).
 
 Example below:
@@ -40,9 +40,10 @@ Example below:
 ```
 @Component
 @Entrypoint
-@Message
 public class LandingRoute implements Route {
 ```
+
+Other Routes just need to implement Route interface and have a ```@Component``` over them.
 
 ### View Initialization
 
@@ -60,10 +61,10 @@ public ResponseList initView(UpdateWrapper wrapper) {
 }
 ```
 
-### Message/Callback handlers
+### Update handlers
 
-Currently, bot supports handling two basic types of updates - messages and callbacks, and to declare that the class is handling a `Message` or a `Callback`, respective annotations should be put over the class.
-Moreover, to create the logic itself, it is needed to specify inside the route class the handler methods with corresponding `MessageMapping` and `CallbackMapping`. Each method gets an `UpdateWrapper` instance as an input and should return a ResponseEntity:
+Currently, bot supports handling of: Message, Callback, Edit Message, Document, Photo and Video types of updates.
+To create the logic itself, it is needed to specify inside the route class the handler methods with corresponding `MessageMapping`, `CallbackMapping` etc. Each method gets an `UpdateWrapper` instance as an input and should return a ResponseEntity:
 
 ```
 @MessageMapping
@@ -81,6 +82,7 @@ public ResponseEntity helloWorld(UpdateWrapper wrapper, I18NLabelsWrapper i18NLa
 
 You can also specify the mapping for ```*Mapping``` annotations to specify which updates should be matched and handled to them.
 By default, if no value specified, it uses * matcher effectively matching any update of this type.
+For example, if you wish to route to method only MKV video documents, you should specify ```@DocumentMapping("video/x-matroska")```
 
 (similarly Callback handlers can be created)
 
@@ -126,6 +128,21 @@ public class BlacklistCheckFilter implements FilterAdapter {
 }
 ```
 
+### Exception Handling
+
+OOTB supports handling Exceptions using an ```@ExceptionHandler```.
+Just create a new public method within a Route class, put an annotation, specify the wanted exception. Other stugg will be provided for you.
+```
+@ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity handleException(Exception e, UpdateWrapper wrapper) {
+    
+        return ResponseEntity.builder()
+                .response(some response)
+                .build();
+
+    }
+```
+
 For better understanding of the place of filters in the general flow, at the end I will include a flowchart.
 
 ### Session management
@@ -147,6 +164,35 @@ Overall, to use the I18N you need:
 * In view initializer method or handler method add second input parameter `I18NLabelsWrapper i18NLabelsWrapper`. This will be automatically constructed and injected for you;
 * Create message properties files under resources folder, default file is `messages_en.properties`, but you can add your own files for each locale you need;
 * In code, to get the label, call `i18NLabelsWrapper.getLabel(key)` (or `i18NLabelsWrapper.getLabel(key, args)` in case you have any custom parameters).
+
+### Multithreading
+
+OOTB supports executing each update within a thread from a thread pool. Thread pool is of fixed size and can be configured.
+Defaults are:
+```
+spring:
+  task:
+    execution:
+      pool:
+        core-size: 10
+        max-size: 25
+        queue-capacity: 25
+        keep-alive: "10s"
+      thread-name-prefix: UpdateTask-
+botio:
+  multiThreadedUpdateConsumerEnabled: true
+```
+
+### Per-user updates locking
+
+To ensure the order or processing and decrease possible concurrency issues - OOTb supports locking updates for each user.
+By default it is enabled:
+```
+botio:
+  perUserRequestLockingEnabled: true
+```
+This will lock execution of updates for single user, if they were submitted in a multithreaded way.
+Each user has their own lock.
 
 ### Flowchart of processing steps:
 ![image](https://github.com/user-attachments/assets/2a251dae-ddbd-471e-be46-82aa7e397368)
