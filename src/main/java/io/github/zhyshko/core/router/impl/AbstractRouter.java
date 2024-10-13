@@ -5,17 +5,14 @@ import io.github.zhyshko.core.i18n.impl.I18NLabelsWrapper;
 import io.github.zhyshko.core.response.ResponseEntity;
 import io.github.zhyshko.core.router.Route;
 import io.github.zhyshko.core.router.UpdateRouter;
-import io.github.zhyshko.core.util.MethodUtil;
-import io.github.zhyshko.core.util.RequestWrapper;
-import io.github.zhyshko.core.util.UpdateType;
-import io.github.zhyshko.core.util.UpdateWrapper;
+import io.github.zhyshko.core.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public abstract class AbstractRouter implements UpdateRouter {
@@ -23,7 +20,8 @@ public abstract class AbstractRouter implements UpdateRouter {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractRouter.class);
 
     private ConfigProperties config;
-    private List<Route> routes;
+    private Map<Integer, Route> routeHashCodes;
+    private Map<Route, Map<UpdateType, Map<String, Method>>> methodMappings;
 
     @Override
     public Optional<ResponseEntity> handle(UpdateWrapper wrapper, I18NLabelsWrapper i18NLabelsWrapper) throws Exception {
@@ -32,7 +30,7 @@ public abstract class AbstractRouter implements UpdateRouter {
         Optional<ResponseEntity> responseEntityOptional;
         try {
             responseEntityOptional = handleRoute(wrapper, i18NLabelsWrapper, routeToHandle);
-        } catch(Exception e) {
+        } catch (Exception e) {
             responseEntityOptional = handleException(wrapper, i18NLabelsWrapper, routeToHandle, e);
         }
         afterHandle(responseEntityOptional, wrapper, i18NLabelsWrapper);
@@ -46,23 +44,21 @@ public abstract class AbstractRouter implements UpdateRouter {
 
     @Override
     public void afterHandle(Optional<ResponseEntity> responseEntityOptional,
-                     UpdateWrapper wrapper, I18NLabelsWrapper i18NLabelsWrapper) {
+                            UpdateWrapper wrapper, I18NLabelsWrapper i18NLabelsWrapper) {
         // no default implementation
     }
 
     @Override
     public Route getRouteToHandle(UpdateWrapper wrapper) {
-        return routes.stream()
-                .filter(r -> r.getClass().hashCode() == wrapper.getState())
-                .findFirst()
+        return Optional.ofNullable(routeHashCodes.get(wrapper.getState()))
                 .orElseThrow(() -> new IllegalArgumentException("Route for given path: " + wrapper.getState() + " not found"));
     }
 
     protected Optional<ResponseEntity> handleRoute(UpdateWrapper wrapper, I18NLabelsWrapper i18NLabelsWrapper,
-                                                    Route routeToHandle) throws Exception{
-
+                                                   Route routeToHandle) throws Exception {
         Method methodToHandle = MethodUtil.getMethodForRequest(routeToHandle,
-                RequestWrapper.builder().payload(wrapper.getPayload()).updateType(getType()).build());
+                RequestWrapper.builder().mapping(wrapper.getMapping()).updateType(getType()).build(),
+                this.methodMappings);
 
         LOG.info("Routing {} to {}:{}",
                 wrapper.getUserId(), routeToHandle.getClass().getSimpleName(), methodToHandle.getName());
@@ -70,12 +66,12 @@ public abstract class AbstractRouter implements UpdateRouter {
         try {
             Object responseObj = null;
             Class<?>[] types = methodToHandle.getParameterTypes();
-            if(types.length == 0) {
+            if (types.length == 0) {
                 responseObj = methodToHandle.invoke(routeToHandle);
-            } else if(types.length == 1 && types[0] == UpdateWrapper.class) {
+            } else if (types.length == 1 && types[0] == UpdateWrapper.class) {
                 responseObj = methodToHandle.invoke(routeToHandle, wrapper);
-            } else if(types.length == 2 && types[0] == UpdateWrapper.class && types[1] == I18NLabelsWrapper.class) {
-                if(!config.isI18nEnabled()) {
+            } else if (types.length == 2 && types[0] == UpdateWrapper.class && types[1] == I18NLabelsWrapper.class) {
+                if (!config.isI18nEnabled()) {
                     throw new IllegalArgumentException(
                             String.format("I18N is not enabled, but %s:%s requires i18nLabelsWrapper",
                                     routeToHandle.getClass().getSimpleName(), methodToHandle.getName()));
@@ -99,14 +95,15 @@ public abstract class AbstractRouter implements UpdateRouter {
     }
 
     protected Optional<ResponseEntity> handleException(UpdateWrapper wrapper, I18NLabelsWrapper i18NLabelsWrapper,
-                                   Route routeToHandle, Exception exception) throws Exception {
-        if(exception instanceof InvocationTargetException) {
+                                                       Route routeToHandle, Exception exception) throws Exception {
+        if (exception instanceof InvocationTargetException) {
             exception = (Exception) exception.getCause();
         }
 
-        Method exceptionHandlerMethod = MethodUtil.getExceptionHandlerMethod(routeToHandle, exception);
+        Method exceptionHandlerMethod = MethodUtil.getExceptionHandlerMethod(routeToHandle, exception,
+                this.methodMappings);
 
-        if(exceptionHandlerMethod == null) {
+        if (exceptionHandlerMethod == null) {
             LOG.error("Unhandled exception occurred during {}", routeToHandle.getClass().getSimpleName(), exception);
             throw exception;
         }
@@ -116,11 +113,11 @@ public abstract class AbstractRouter implements UpdateRouter {
         try {
             Object responseObj = null;
             Class<?>[] types = exceptionHandlerMethod.getParameterTypes();
-            if(types.length == 1) {
+            if (types.length == 1) {
                 responseObj = exceptionHandlerMethod.invoke(routeToHandle, exception);
-            } else if(types.length == 2 && types[0] == Exception.class && types[1] == UpdateWrapper.class) {
+            } else if (types.length == 2 && types[0] == Exception.class && types[1] == UpdateWrapper.class) {
                 responseObj = exceptionHandlerMethod.invoke(routeToHandle, exception, wrapper);
-            } else if(types.length == 3 && types[0] == Exception.class && types[1] == UpdateWrapper.class
+            } else if (types.length == 3 && types[0] == Exception.class && types[1] == UpdateWrapper.class
                     && types[2] == I18NLabelsWrapper.class) {
                 responseObj = exceptionHandlerMethod.invoke(routeToHandle, exception, wrapper, i18NLabelsWrapper);
             } else {
@@ -141,18 +138,19 @@ public abstract class AbstractRouter implements UpdateRouter {
         }
     }
 
-    @Override
-    public UpdateType getType() {
-        return null;
-    }
-
     @Autowired
     public void setConfig(ConfigProperties config) {
         this.config = config;
     }
 
     @Autowired
-    public void setRoutes(List<Route> routes) {
-        this.routes = routes;
+    public void setRouteHashCodes(Map<Integer, Route> routeHashCodes) {
+        this.routeHashCodes = routeHashCodes;
+    }
+
+    @Autowired
+    public void setMethodMappings(
+            Map<Route, Map<UpdateType, Map<String, Method>>> methodMappings) {
+        this.methodMappings = methodMappings;
     }
 }

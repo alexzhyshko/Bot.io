@@ -7,7 +7,8 @@ public enum UpdateType {
     EDIT_MESSAGE,
     DOCUMENT,
     PHOTO,
-    VIDEO
+    VIDEO,
+    EXCEPTION
 
 
 }

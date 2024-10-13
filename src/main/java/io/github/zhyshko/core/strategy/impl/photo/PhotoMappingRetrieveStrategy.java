@@ -1,19 +1,18 @@
 package io.github.zhyshko.core.strategy.impl.photo;
 
 import io.github.zhyshko.core.predicate.impl.PhotoTypePredicate;
-import io.github.zhyshko.core.strategy.PayloadRetrieveStrategy;
-import io.github.zhyshko.core.util.DocumentPayload;
+import io.github.zhyshko.core.strategy.MappingRetrieveStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-public class PhotoPayloadRetrieveStrategy implements PayloadRetrieveStrategy {
+public class PhotoMappingRetrieveStrategy implements MappingRetrieveStrategy {
     private final PhotoTypePredicate photoTypePredicate;
 
     @Autowired
-    public PhotoPayloadRetrieveStrategy(PhotoTypePredicate photoTypePredicate) {
+    public PhotoMappingRetrieveStrategy(PhotoTypePredicate photoTypePredicate) {
         this.photoTypePredicate = photoTypePredicate;
     }
 
@@ -23,11 +22,8 @@ public class PhotoPayloadRetrieveStrategy implements PayloadRetrieveStrategy {
     }
 
     @Override
-    public DocumentPayload retrieve(Update update) {
-        return DocumentPayload.builder()
-                .caption(update.getMessage().getCaption())
-                .payload(update.getMessage().getPhoto())
-                .build();
+    public String retrieve(Update update) {
+        return "*";
     }
 
     @Override

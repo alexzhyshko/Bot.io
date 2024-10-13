@@ -1,18 +1,18 @@
 package io.github.zhyshko.core.strategy.impl.callback;
 
 import io.github.zhyshko.core.predicate.impl.CallbackTypePredicate;
-import io.github.zhyshko.core.strategy.PayloadRetrieveStrategy;
+import io.github.zhyshko.core.strategy.MappingRetrieveStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-public class CallbackPayloadRetrieveStrategy implements PayloadRetrieveStrategy {
+public class CallbackMappingRetrieveStrategy implements MappingRetrieveStrategy {
     private final CallbackTypePredicate callbackTypePredicate;
 
     @Autowired
-    public CallbackPayloadRetrieveStrategy(CallbackTypePredicate callbackTypePredicate) {
+    public CallbackMappingRetrieveStrategy(CallbackTypePredicate callbackTypePredicate) {
         this.callbackTypePredicate = callbackTypePredicate;
     }
 

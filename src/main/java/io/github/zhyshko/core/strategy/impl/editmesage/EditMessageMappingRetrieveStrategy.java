@@ -1,18 +1,18 @@
 package io.github.zhyshko.core.strategy.impl.editmesage;
 
 import io.github.zhyshko.core.predicate.impl.EditMessageTypePredicate;
-import io.github.zhyshko.core.strategy.PayloadRetrieveStrategy;
+import io.github.zhyshko.core.strategy.MappingRetrieveStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-public class EditMessagePayloadRetrieveStrategy implements PayloadRetrieveStrategy {
+public class EditMessageMappingRetrieveStrategy implements MappingRetrieveStrategy {
     private final EditMessageTypePredicate editMessageTypePredicate;
 
     @Autowired
-    public EditMessagePayloadRetrieveStrategy(EditMessageTypePredicate editMessageTypePredicate) {
+    public EditMessageMappingRetrieveStrategy(EditMessageTypePredicate editMessageTypePredicate) {
         this.editMessageTypePredicate = editMessageTypePredicate;
     }
 

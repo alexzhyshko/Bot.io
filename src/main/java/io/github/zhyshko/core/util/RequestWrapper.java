@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class RequestWrapper {
 
-    private Object payload;
+    private String mapping;
     private UpdateType updateType;
 
 }

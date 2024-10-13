@@ -4,8 +4,8 @@ import io.github.zhyshko.core.facade.UpdateFacade;
 import io.github.zhyshko.core.provider.UpdateTypeProvider;
 import io.github.zhyshko.core.service.StateService;
 import io.github.zhyshko.core.strategy.ChatIdRetrieveStrategy;
+import io.github.zhyshko.core.strategy.MappingRetrieveStrategy;
 import io.github.zhyshko.core.strategy.MessageIdRetrieveStrategy;
-import io.github.zhyshko.core.strategy.PayloadRetrieveStrategy;
 import io.github.zhyshko.core.strategy.UserIdRetrieveStrategy;
 import io.github.zhyshko.core.util.UpdateType;
 import io.github.zhyshko.core.util.UpdateWrapper;
@@ -25,7 +25,7 @@ public class DefaultUpdateFacade implements UpdateFacade {
     private List<MessageIdRetrieveStrategy> messageIdRetrieveStrategies;
     private List<ChatIdRetrieveStrategy> chatIdRetrieveStrategies;
     private List<UpdateTypeProvider> updateTypeProviders;
-    private List<PayloadRetrieveStrategy> payloadRetrieveStrategies;
+    private List<MappingRetrieveStrategy> mappingRetrieveStrategies;
 
 
     @Override
@@ -36,7 +36,7 @@ public class DefaultUpdateFacade implements UpdateFacade {
                 .messageId(getMessageId(update))
                 .chatId(getChatId(update))
                 .update(update)
-                .payload(getPayload(update))
+                .mapping(getMapping(update))
                 .state(this.stateService.getState(getUserId(update)))
                 .build();
     }
@@ -78,8 +78,8 @@ public class DefaultUpdateFacade implements UpdateFacade {
                 .orElseThrow(() -> new IllegalArgumentException("Update type is unsupported: "+update));
     }
 
-    private Object getPayload(Update update) {
-        return payloadRetrieveStrategies.stream()
+    private String getMapping(Update update) {
+        return mappingRetrieveStrategies.stream()
                 .sorted(Comparator.comparingInt(Ordered::getOrder))
                 .filter(s -> s.isApplicable(update))
                 .findFirst()
@@ -113,7 +113,7 @@ public class DefaultUpdateFacade implements UpdateFacade {
     }
 
     @Autowired
-    public void setPayloadRetrieveStrategies(List<PayloadRetrieveStrategy> payloadRetrieveStrategies) {
-        this.payloadRetrieveStrategies = payloadRetrieveStrategies;
+    public void setPayloadRetrieveStrategies(List<MappingRetrieveStrategy> mappingRetrieveStrategies) {
+        this.mappingRetrieveStrategies = mappingRetrieveStrategies;
     }
 }
